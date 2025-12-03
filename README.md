@@ -5,7 +5,6 @@
 ## &emsp;&emsp;張碩庭
 
 ---
-# [計劃書連結](https://1drv.ms/w/c/f91728052b40ca1c/Eeus_b4zEsVOrjuZkx9ZZFAB6fw6MekU8xJfTSsAPnXh3A?e=E2vqdO)
 # 計畫書文案
 
 &emsp;&emsp;近幾年智慧城市的議題一直被談論，但其實「影像定位」常常被大家忽略。在許多的導航、巡檢、交通分析系統當中都依賴著Google Stree View(Google街景) 所提供的龐大環景資料藉此來輔助定位。然而，當我們投入研究、更深入的查資料，就越發覺得背脊發涼—Google並不是我們台灣的企業,而是美國企業，他們並沒有義務永遠的開放資料或者是API(應用程式介面)。  
