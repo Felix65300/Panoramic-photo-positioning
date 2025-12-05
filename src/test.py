@@ -5,14 +5,14 @@ from torch.utils.data import DataLoader
 from src.data import MyDataset
 import time
 
-csv_data = pd.read_csv("_gkcN1hzqm1RFcsvpk5Xmg/stitched_pano_final.csv")
+csv_data = pd.read_csv("../_gkcN1hzqm1RFcsvpk5Xmg/stitched_pano_final.csv")
 
 transform = transforms.Compose([
     transforms.Resize((64, 64)),
     transforms.ToTensor()
 ])
 
-dataset = MyDataset(csv_data, "_gkcN1hzqm1RFcsvpk5Xmg", transform)
+dataset = MyDataset(csv_data, "../_gkcN1hzqm1RFcsvpk5Xmg", transform)
 loader = DataLoader(dataset, batch_size=4, shuffle=False)
 
 for i in range(len(dataset)):
