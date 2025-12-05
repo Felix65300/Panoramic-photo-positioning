@@ -2,7 +2,7 @@
 import pandas as pd
 from torchvision import transforms
 from torch.utils.data import DataLoader
-from data import MyDataset
+from src.data import MyDataset
 import time
 
 csv_data = pd.read_csv("_gkcN1hzqm1RFcsvpk5Xmg/stitched_pano_final.csv")
