@@ -31,4 +31,4 @@ class MyDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
-        return image, id, filename
+        return image, id
