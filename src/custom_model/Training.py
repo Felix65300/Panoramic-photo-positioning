@@ -33,7 +33,7 @@ import pandas as pd
 # ---------------------------------
 BATCH_SIZE = 16 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 0.001 # Adam 的標準學習率
-Num_Epoch = 20
+Num_Epoch = 100
 
 
 # ----------------------------------
