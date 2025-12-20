@@ -36,8 +36,10 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    # 路徑設定
-    img_path = os.path.join(Project_Root, "_gkcN1hzqm1RFcsvpk5Xmg")
+
+    csv_path = os.path.join(Project_Root, "Dataset_Step1", 'stitched_pano_final.csv')
+    img_path = os.path.join(Project_Root, "Dataset_Step1")
+    df = pd.read_csv(csv_path)
     
     # 1. 載入 Dataset
     dataset = get_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=True)
