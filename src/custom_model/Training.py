@@ -32,8 +32,8 @@ from Convolution_Class import CNN
 # 1. 設定參數與裝置
 # ---------------------------------
 BATCH_SIZE = 16 # 根據顯卡記憶體調整 (16 或 32)
-Learning_Rate = 1e-5 # Adam 的標準學習率
-Num_Epoch = 10
+Learning_Rate = 1e-3 # Adam 的標準學習率
+Num_Epoch = 100
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 DEVICE = torch.device('cuda')
