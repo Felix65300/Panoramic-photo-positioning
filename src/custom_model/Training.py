@@ -32,7 +32,7 @@ from Convolution_Class import CNN
 # 1. 設定參數與裝置
 # ---------------------------------
 BATCH_SIZE = 16 # 根據顯卡記憶體調整 (16 或 32)
-Learning_Rate = 1e-5 # Adam 的標準學習率
+Learning_Rate = 1e-4 # Adam 的標準學習率
 Num_Epoch = 10
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
@@ -106,4 +106,4 @@ for epoch in range(Num_Epoch):
 plt.figure(figsize=(10,5))
 plt.plot(epoch_losses, label='Training Loss')
 plt.grid(True)
-plt.savefig('loss_curve.png')
+plt.savefig('Loss_curve.png')

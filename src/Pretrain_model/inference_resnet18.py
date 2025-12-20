@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm 
+from matplotlib import pyplot as plt
 
 # ---------------------------------------------------------
 # 環境與路徑設定 (與 Training 檔保持一致)
@@ -16,6 +17,8 @@ Project_Root = os.path.dirname(parent_dir)
 
 sys.path.append(parent_dir)
 sys.path.append(Project_Root)
+
+
 
 # Import 自定義模組
 from src.data import get_dataset
@@ -35,7 +38,7 @@ def main():
     print(f"Using device: {device}")
 
     # 2. 準備資料路徑
-    img_path = os.path.join(Project_Root, "_gkcN1hzqm1RFcsvpk5Xmg")
+    img_path = os.path.join(Project_Root, "Dataset_Step1")
     
     # 3. 載入 Dataset
     # 注意：這裡 is_train=False，代表不做隨機位移，只做 Resize 和 Tensor 轉換
@@ -80,6 +83,7 @@ def main():
     
     print("Start Inference...")
     
+    epoch_accuracy = []
     # torch.no_grad() 讓 PyTorch 知道不用算梯度，省記憶體且加速
     with torch.no_grad():
         with tqdm(test_loader, desc="Testing", ncols=100) as loop:
@@ -98,6 +102,7 @@ def main():
                 
                 # 即時更新進度條上的準確率
                 current_acc = 100 * correct / total
+                epoch_accuracy.append(current_acc)
                 loop.set_postfix(acc=f"{current_acc:.2f}%")
 
     # 8. 輸出最終結果
@@ -106,6 +111,18 @@ def main():
     print(f"Final Accuracy: {final_acc:.2f}%")
     print(f"Correct: {correct} / {total}")
     print("-" * 30)
+
+    plt.figure(figsize=(10, 5))
+
+
+    plt.plot(epoch_accuracy, label='Training Accuracy') 
+    plt.title('Training Accuracy Trend') 
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy (%)')
+    plt.legend()
+    plt.grid(True)
+    Accreuracy_photo_path = os.path.join(current_dir, 'Resnet18_accuracy.png')
+    plt.savefig(Accreuracy_photo_path)
 
 if __name__ == '__main__':
     main()
