@@ -106,4 +106,4 @@ for epoch in range(Num_Epoch):
 plt.figure(figsize=(10,5))
 plt.plot(epoch_losses, label='Training Loss')
 plt.grid(True)
-plt.savefig('loss_curve.png')
+plt.savefig('Loss_curve.png')

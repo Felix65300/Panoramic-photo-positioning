@@ -13,6 +13,7 @@ sys.path.append(project_root)
 
 from src.data import get_dataset
 from Convolution_Class import CNN
+from matplotlib import pyplot as plt
 # ---------------------------------------------------------
 # 參數設定
 # ---------------------------------------------------------
@@ -49,6 +50,7 @@ def main():
     print(f"--> 開始測試 1000 張圖片")
     print(f"{'='*50}")
 
+    epoch_accuracy = []
     # 使用 tqdm 顯示進度條
     with torch.no_grad():
         for images, labels in tqdm(test_loader, desc="Testing", unit='batch'):
@@ -59,6 +61,7 @@ def main():
 
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            epoch_accuracy.append(100 * correct / total)
 
     # 4. 結算成績
     accuracy = 100 * correct / total
@@ -71,5 +74,10 @@ def main():
     print(f"🏆 總正確率 (Accuracy): {accuracy:.2f}%")
     print(f"{'='*50}")
 
+    # 5. 存圖表
+    plt.figure(figsize=(10, 5))
+    plt.plot(epoch_accuracy, label='Training Loss')
+    plt.grid(True)
+    plt.savefig('Accuracy.png')
 if __name__ == '__main__':
     main()
