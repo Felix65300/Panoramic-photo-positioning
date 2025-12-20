@@ -15,7 +15,7 @@ from Convolution_Class import CNN
 
 # 參數
 MODEL_PATH = 'pano_cnn_model.pth'
-IMG_DIR = os.path.join(project_root,'_gkcN1hzqm1RFcsvpk5Xmg')
+IMG_DIR = os.path.join(project_root,'Dataset_Step1')
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 BATCH_SIZE = 10
