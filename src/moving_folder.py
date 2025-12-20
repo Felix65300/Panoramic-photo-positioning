@@ -13,7 +13,7 @@ sys.path.append(parent_dir)
 # 程式開始
 import shutil
 
-TARGET_DIRECTORY = os.path.join(parent_dir,"_gkcN1hzqm1RFcsvpk5Xmg")
+TARGET_DIRECTORY = os.path.join(parent_dir,"Dataset_Step1")
 print(TARGET_DIRECTORY)
 
 # 1. 取得該資料夾內的所有檔案
