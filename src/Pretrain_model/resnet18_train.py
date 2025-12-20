@@ -29,8 +29,8 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    csv_path = os.path.join(Project_Root, "_gkcN1hzqm1RFcsvpk5Xmg", 'stitched_pano_final.csv')
-    img_path = os.path.join(Project_Root, "_gkcN1hzqm1RFcsvpk5Xmg")
+    csv_path = os.path.join(Project_Root, "Dataset_Step1", 'stitched_pano_final.csv')
+    img_path = os.path.join(Project_Root, "Dataset_Step1")
     df = pd.read_csv(csv_path)
     
     dataset = MyDataset(df, img_path)
