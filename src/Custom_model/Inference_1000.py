@@ -17,12 +17,12 @@ from matplotlib import pyplot as plt
 # ---------------------------------------------------------
 # 參數設定
 # ---------------------------------------------------------
-MODEL_PATH = 'pano_cnn_model.pth'
+MODEL_PATH = os.path.join(current_dir,'pano_cnn_model.pth')
 IMG_DIR = os.path.join(project_root, 'Dataset_Step1')
 
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
-BATCH_SIZE = 32
+BATCH_SIZE = 1
 DEVICE = torch.device("cuda")
 
 def testing():
@@ -78,11 +78,11 @@ def main():
     print(f"🏆 總正確率 (Accuracy): {accuracy:.2f}%")
     print(f"{'='*50}")
 
-    # 5. 存圖表
-    plt.figure(figsize=(10, 5))
-    plt.plot(epoch_accuracy, label='Training Loss')
-    plt.grid(True)
-    plt.savefig('Accuracy.png')
+    # # 5. 存圖表
+    # plt.figure(figsize=(10, 5))
+    # plt.plot(epoch_accuracy, label='Training Loss')
+    # plt.grid(True)
+    # plt.savefig('Accuracy.png')
 
 
 if __name__ == '__main__':
