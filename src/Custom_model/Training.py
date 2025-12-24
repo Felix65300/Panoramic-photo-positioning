@@ -56,54 +56,62 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
     optimizer,mode='min', factor=0.5,patience = 10,min_lr = 1e-6
     )
 
-# ---------------------------------------------------
-# 4. 開始訓練
-# ---------------------------------------------------
-epoch_losses = []
-best_loss = float('inf')
-if os.path.exists(MODEL_PATH):
-    checkpoint = torch.load(MODEL_PATH)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    best_loss = checkpoint['best_loss']
+def model_training():
+    # ---------------------------------------------------
+    # 4. 開始訓練
+    # ---------------------------------------------------
+    epoch_losses = []
+    best_loss = float('inf')
+    # if os.path.exists(MODEL_PATH):
+    #     checkpoint = torch.load(MODEL_PATH)
+    #     model.load_state_dict(checkpoint['model_state_dict'])
+    #     best_loss = checkpoint['best_loss']
 
-model.train()
-print("--> 開始訓練...")
+    model.train()
+    print("--> 開始訓練...")
 
-for epoch in range(Num_Epoch):
-    running_loss = 0.0
+    for epoch in range(Num_Epoch):
+        running_loss = 0.0
 
-    with tqdm(train_loader, desc=f"Epoch {epoch+1}/{Num_Epoch}",ncols=100) as loop:
-        for images, labels in loop:
-            images, labels = images.to(DEVICE), labels.to(DEVICE)
+        with tqdm(train_loader, desc=f"Epoch {epoch+1}/{Num_Epoch}",ncols=100) as loop:
+            for images, labels in loop:
+                images, labels = images.to(DEVICE), labels.to(DEVICE)
 
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = loss_func(outputs, labels)
-            loss.backward()
-            optimizer.step()
+                optimizer.zero_grad()
+                outputs = model(images)
+                loss = loss_func(outputs, labels)
+                loss.backward()
+                optimizer.step()
 
-            running_loss += loss.item()
-            loop.set_postfix(loss=loss.item())
-            current_lr = optimizer.param_groups[0]['lr']
+                running_loss += loss.item()
+                loop.set_postfix(loss=loss.item())
+                current_lr = optimizer.param_groups[0]['lr']
 
-    avg_loss = running_loss / len(train_loader)
-    epoch_losses.append(avg_loss)
-    scheduler.step(avg_loss)
+        avg_loss = running_loss / len(train_loader)
+        epoch_losses.append(avg_loss)
+        scheduler.step(avg_loss)
 
-    print(f"Epoch {epoch+1} | Loss: {avg_loss:.4f} | LR: {current_lr:.8f}")
+        print(f"Epoch {epoch+1} | Loss: {avg_loss:.4f} | LR: {current_lr:.8f}")
 
-    if avg_loss < best_loss:
-        best_loss = avg_loss
+        # if avg_loss < best_loss:
+        #     best_loss = avg_loss
+        #
+        #     checkpoint = {
+        #         'model_state_dict': model.state_dict(),
+        #         'best_loss': best_loss,
+        #         'epoch': epoch+1
+        #     }
+        #
+        #     torch.save(checkpoint, MODEL_PATH)
+    return epoch_losses
 
-        checkpoint = {
-            'model_state_dict': model.state_dict(),
-            'best_loss': best_loss,
-            'epoch': epoch+1
-        }
+def main():
+    epoch_losses = model_training()
+    # 存圖表
+    plt.figure(figsize=(10,5))
+    plt.plot(epoch_losses, label='Training Loss')
+    plt.grid(True)
+    plt.savefig('Loss_curve.png')
 
-        torch.save(checkpoint, MODEL_PATH)
-# 存圖表
-plt.figure(figsize=(10,5))
-plt.plot(epoch_losses, label='Training Loss')
-plt.grid(True)
-plt.savefig('Loss_curve.png')
+if __name__ == '__main__':
+    main()
