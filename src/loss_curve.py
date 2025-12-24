@@ -11,7 +11,7 @@ sys.path.append(src)
 Custom_model = os.path.join(src,'Custom_model')
 Resnet18 = os.path.join(src,'Resnet18')
 sys.path.append(Resnet18)
-sys.path.append(src)
+sys.path.append(Custom_model)
 
 from Custom_model.Training import model_training
 from Resnet18.resnet18_train import resnet18_training

@@ -27,7 +27,7 @@ from resnet18_revised_version import get_pano_model
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 BATCH_SIZE = 128
-epochs = 100
+epochs = 200
 
 # 權重檔案名稱
 MODEL_PATH = os.path.join(current_dir, 'resnet18_pano_1000classes_optimized.pth')
