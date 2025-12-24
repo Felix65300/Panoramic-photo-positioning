@@ -25,7 +25,7 @@ IMG_HEIGHT = 128
 BATCH_SIZE = 1
 DEVICE = torch.device("cuda")
 
-def testing():
+def model_testing():
     # 1. 準備 Dataset (讀取全部圖片)
     # is_train=False 代表不做隨機位移，測試原始圖片
     test_dataset = get_dataset(IMG_DIR, IMG_WIDTH, IMG_HEIGHT, is_train=False)
@@ -66,7 +66,7 @@ def testing():
     return epoch_accuracy,correct,total
 
 def main():
-    epoch_accuracy,correct,total = testing()
+    epoch_accuracy,correct,total = model_testing()
     # 4. 結算成績
     accuracy = 100 * correct / total
 
