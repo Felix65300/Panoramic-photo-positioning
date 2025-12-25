@@ -17,18 +17,18 @@ from matplotlib import pyplot as plt
 # ---------------------------------------------------------
 # 參數設定
 # ---------------------------------------------------------
-MODEL_PATH = 'pano_cnn_model.pth'
+MODEL_PATH = os.path.join(current_dir,'pano_cnn_model.pth')
 IMG_DIR = os.path.join(project_root, 'Dataset_Step1')
 
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
-BATCH_SIZE = 32
+BATCH_SIZE = 1
 DEVICE = torch.device("cuda")
 
-def main():
+def model_testing():
     # 1. 準備 Dataset (讀取全部圖片)
     # is_train=False 代表不做隨機位移，測試原始圖片
-    test_dataset = get_dataset(IMG_DIR,IMG_WIDTH, IMG_HEIGHT, is_train=False)
+    test_dataset = get_dataset(IMG_DIR, IMG_WIDTH, IMG_HEIGHT, is_train=False)
 
     # shuffle=True: 確保 1000 張圖片順序是被打亂的
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -48,7 +48,7 @@ def main():
     total = 0
 
     print(f"--> 開始測試 1000 張圖片")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
 
     epoch_accuracy = []
     # 使用 tqdm 顯示進度條
@@ -63,6 +63,10 @@ def main():
             correct += (predicted == labels).sum().item()
             epoch_accuracy.append(100 * correct / total)
 
+    return epoch_accuracy,correct,total
+
+def main():
+    epoch_accuracy,correct,total = model_testing()
     # 4. 結算成績
     accuracy = 100 * correct / total
 
@@ -74,10 +78,12 @@ def main():
     print(f"🏆 總正確率 (Accuracy): {accuracy:.2f}%")
     print(f"{'='*50}")
 
-    # 5. 存圖表
-    plt.figure(figsize=(10, 5))
-    plt.plot(epoch_accuracy, label='Training Loss')
-    plt.grid(True)
-    plt.savefig('Accuracy.png')
+    # # 5. 存圖表
+    # plt.figure(figsize=(10, 5))
+    # plt.plot(epoch_accuracy, label='Training Loss')
+    # plt.grid(True)
+    # plt.savefig('Accuracy.png')
+
+
 if __name__ == '__main__':
     main()
