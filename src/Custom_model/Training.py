@@ -33,7 +33,7 @@ from Convolution_Class import CNN
 # ---------------------------------
 BATCH_SIZE = 16 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
-Num_Epoch = 10
+Num_Epoch = 200
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 DEVICE = torch.device('cuda')
