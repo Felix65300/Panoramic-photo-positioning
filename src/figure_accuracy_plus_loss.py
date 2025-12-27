@@ -59,7 +59,7 @@ def main():
     # 繪製手刻模型的 Loss 曲線
     ax1.plot(epochs, model_losses, label="Model", color=color_model, linestyle='-')
     # 繪製 Resnet 18 的 Loss 曲線
-    ax1.plot(epochs, resnet18_losses, label="Resnet18", color=color_resnet18, linestyle='-')
+    ax1.plot(epochs, resnet18_losses, label="Resnet18", color=color_resnet18, linestyle='--')
 
     ax1.set_xlabel("Epochs")
     ax1.set_ylabel("Loss Value")
@@ -72,10 +72,10 @@ def main():
     # 繪製 Model A 的 Accuracy 曲線
     ax2.plot(epochs, model_accs, label="Model", color=color_model, linestyle='-')
     # 繪製 Model B 的 Accuracy 曲線
-    ax2.plot(epochs, resnet18_accs, label="Resnet18", color=color_resnet18, linestyle='-')
+    ax2.plot(epochs, resnet18_accs, label="Resnet18", color=color_resnet18, linestyle='--')
 
     ax2.set_xlabel("Epochs")
-    ax2.set_ylabel("Accuracy")
+    ax2.set_ylabel("Accuracy (%)")
     ax2.set_title("Accuracy Comparison")
     ax2.legend(loc='lower right')
     ax2.set_ylim(0, 105)
