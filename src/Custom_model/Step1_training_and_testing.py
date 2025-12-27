@@ -15,34 +15,34 @@ sys.path.append(parent_dir)
 sys.path.append(Project_Root)
 
 from src.data import get_dataset
-from resnet18_revised_version import get_pano_model
+from Convolution_Class import CNN
 
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
-BATCH_SIZE = 128
+BATCH_SIZE = 16
 DEVIVE = torch.device("cuda")
 IMG_PATH = os.path.join(Project_Root, "Dataset_Step1")
 epoches = 200
 
-MODEL_PATH = os.path.join(current_dir, 'resnet18_pano_1000classes_optimized.pth')
+MODEL_PATH = os.path.join(current_dir, 'pano_cnn_model.pth')
 
-def resnet18_training_and_testing():
+
+def model_training_and_testing():
     dataset = get_dataset(root_dir=IMG_PATH, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=True)
 
     trainloader = DataLoader(
         dataset=dataset,
         batch_size=BATCH_SIZE,
-        shuffle=True,
-        num_workers=8,
-        pin_memory=True,
-        persistent_workers=True
+        shuffle=True
     )
 
-    model = get_pano_model(num_classes=1000, pretrained=False)
+    model = CNN()
     model = model.to(DEVIVE)
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=0)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epoches, eta_min=1e-6)
+    criterion = nn.CrossEntropyLoss().to(DEVIVE)
+    optimizer = optim.Adam(model.parameters(), lr=1e-4)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode='min', factor=0.5, patience=10, min_lr=1e-6
+    )
 
     start_epoch = 0
     best_acc = 0.0
@@ -89,7 +89,6 @@ def resnet18_training_and_testing():
                 current_acc = 100 * correct / total
                 loop.set_postfix(loss=f"{loss.item():.4f}", acc=f"{current_acc:.2f}%")
 
-        scheduler.step()
 
         epoch_acc = 100 * correct / total
         avg_loss = running_loss / len(trainloader)
@@ -97,6 +96,7 @@ def resnet18_training_and_testing():
         epoch_accs.append(epoch_acc)
         current_lr = scheduler.get_lr()[0]
 
+        scheduler.step(avg_loss)
         print(f"Epoch {epoch + 1} Result: Loss={avg_loss:.4f} | Acc={epoch_acc:.2f}% | LR={current_lr:.6f}")
 
         # 存取最佳權重 ---
@@ -106,8 +106,10 @@ def resnet18_training_and_testing():
         #     print(f"★ New Best Model Saved! (Acc: {best_acc:.2f}%) saved to {MODEL_PATH}")
     return epoch_losses, epoch_accs
 
+
 def main():
-    _,_ = resnet18_training_and_testing()
+    _, _ = model_training_and_testing()
+
 
 if __name__ == "__main__":
     main()
