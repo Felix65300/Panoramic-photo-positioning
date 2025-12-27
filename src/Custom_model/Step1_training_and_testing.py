@@ -22,7 +22,7 @@ IMG_HEIGHT = 128
 BATCH_SIZE = 16
 DEVIVE = torch.device("cuda")
 IMG_PATH = os.path.join(Project_Root, "Dataset_Step1")
-epoches = 200
+epochs = 200
 
 MODEL_PATH = os.path.join(current_dir, 'pano_cnn_model.pth')
 
@@ -63,13 +63,13 @@ def model_training_and_testing():
 
     print("Start training...")
 
-    for epoch in range(start_epoch, epoches):
+    for epoch in range(start_epoch, epochs):
         model.train()
         running_loss = 0.0
         correct = 0
         total = 0
 
-        with tqdm(trainloader, desc=f"Epoch {epoch + 1}/{epoches}", ncols=100, leave=False) as loop:
+        with tqdm(trainloader, desc=f"Epoch {epoch + 1}/{epochs}", ncols=100, leave=False) as loop:
             for img, is_label in loop:
                 img, id_label = img.to(DEVIVE), id_label.to(DEVIVE)
 
