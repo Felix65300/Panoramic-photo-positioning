@@ -70,7 +70,7 @@ def model_training_and_testing():
         total = 0
 
         with tqdm(trainloader, desc=f"Epoch {epoch + 1}/{epochs}", ncols=100, leave=False) as loop:
-            for img, is_label in loop:
+            for img, id_label in loop:
                 img, id_label = img.to(DEVIVE), id_label.to(DEVIVE)
 
                 optimizer.zero_grad()
@@ -94,7 +94,7 @@ def model_training_and_testing():
         avg_loss = running_loss / len(trainloader)
         epoch_losses.append(avg_loss)
         epoch_accs.append(epoch_acc)
-        current_lr = scheduler.get_lr()[0]
+        current_lr = scheduler.get_last_lr()[0]
 
         scheduler.step(avg_loss)
         print(f"Epoch {epoch + 1} Result: Loss={avg_loss:.4f} | Acc={epoch_acc:.2f}% | LR={current_lr:.6f}")

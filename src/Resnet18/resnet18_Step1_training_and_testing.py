@@ -95,7 +95,7 @@ def resnet18_training_and_testing():
         avg_loss = running_loss / len(trainloader)
         epoch_losses.append(avg_loss)
         epoch_accs.append(epoch_acc)
-        current_lr = scheduler.get_lr()[0]
+        current_lr = scheduler.get_last_lr()[0]
 
         print(f"Epoch {epoch + 1} Result: Loss={avg_loss:.4f} | Acc={epoch_acc:.2f}% | LR={current_lr:.6f}")
 
