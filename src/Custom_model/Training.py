@@ -20,11 +20,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from Convolution_Class import  CNN
-import torchvision
 import  matplotlib.pyplot as plt
 from tqdm import tqdm
-import pandas as pd
 from src.data import get_dataset
 from Convolution_Class import CNN
 
@@ -40,32 +37,34 @@ DEVICE = torch.device('cuda')
 TRAIN_DIR = os.path.join(Project_Root, "Dataset_Step1")
 MODEL_PATH = 'pano_cnn_model.pth'
 
-# ----------------------------------
-# 2. 準備資料 (呼叫 data.py)
-# ----------------------------------
-train_dataset = get_dataset(TRAIN_DIR,IMG_WIDTH,IMG_HEIGHT,is_train=True)
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+def model_training ():
+    # ----------------------------------
+    # 2. 準備資料 (呼叫 data.py)
+    # ----------------------------------
+    train_dataset = get_dataset(TRAIN_DIR,IMG_WIDTH,IMG_HEIGHT,is_train=True)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
-# ---------------------------------------------------
-# 3. 初始化模型
-# ---------------------------------------------------
-model = CNN(num_classes=len(train_dataset.classes)).to(DEVICE)
-loss_func = nn.CrossEntropyLoss().to(DEVICE)
-optimizer = optim.Adam(model.parameters(), lr=Learning_Rate)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer,mode='min', factor=0.5,patience = 10,min_lr = 1e-6
-    )
+    # ---------------------------------------------------
+    # 3. 初始化模型
+    # ---------------------------------------------------
+    model = CNN(num_classes=len(train_dataset.classes)).to(DEVICE)
+    loss_func = nn.CrossEntropyLoss().to(DEVICE)
+    optimizer = optim.Adam(model.parameters(), lr=Learning_Rate)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,mode='min', factor=0.5,patience = 10,min_lr = 1e-6
+        )
 
-def model_training():
     # ---------------------------------------------------
     # 4. 開始訓練
     # ---------------------------------------------------
     epoch_losses = []
     best_loss = float('inf')
+    #
     # if os.path.exists(MODEL_PATH):
     #     checkpoint = torch.load(MODEL_PATH)
     #     model.load_state_dict(checkpoint['model_state_dict'])
     #     best_loss = checkpoint['best_loss']
+    #
 
     model.train()
     print("--> 開始訓練...")
@@ -93,6 +92,7 @@ def model_training():
 
         print(f"Epoch {epoch+1} | Loss: {avg_loss:.4f} | LR: {current_lr:.8f}")
 
+        #
         # if avg_loss < best_loss:
         #     best_loss = avg_loss
         #
@@ -103,6 +103,8 @@ def model_training():
         #     }
         #
         #     torch.save(checkpoint, MODEL_PATH)
+        #
+
     return epoch_losses
 
 def main():
