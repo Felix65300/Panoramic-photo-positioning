@@ -61,7 +61,7 @@ def model_training_and_testing():
     epoch_losses = []
     epoch_accs = []
 
-    print("Start training...")
+    print("Model Start training...")
 
     for epoch in range(start_epoch, epochs):
         model.train()

@@ -61,7 +61,7 @@ def resnet18_training_and_testing():
     epoch_losses = []
     epoch_accs = []
 
-    print("Start training...")
+    print("Resnet 18 Start training...")
 
     for epoch in range(start_epoch, epochs):
         model.train()
@@ -70,7 +70,7 @@ def resnet18_training_and_testing():
         total = 0
 
         with tqdm(trainloader, desc=f"Epoch {epoch + 1}/{epochs}", ncols=100, leave=False) as loop:
-            for img, is_label in loop:
+            for img, id_label in loop:
                 img, id_label = img.to(DEVIVE), id_label.to(DEVIVE)
 
                 optimizer.zero_grad()

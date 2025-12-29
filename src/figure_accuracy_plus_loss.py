@@ -51,7 +51,7 @@ def main():
     # 3. 創建畫布和子圖
     # ===========================
     # 創建一個圖形框架，包含 1 列 2 行的子圖
-    fig, (ax1, ax2) = plt.subplots(nrows=1, nols=2, figsize=(14,6))
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(14,6))
 
     # ===========================
     # 4. 繪製左側子圖：Loss Curve 比較
