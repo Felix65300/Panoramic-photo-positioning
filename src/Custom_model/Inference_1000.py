@@ -78,11 +78,11 @@ def main():
     print(f"🏆 總正確率 (Accuracy): {accuracy:.2f}%")
     print(f"{'='*50}")
 
-    # # 5. 存圖表
-    # plt.figure(figsize=(10, 5))
-    # plt.plot(epoch_accuracy, label='Training Loss')
-    # plt.grid(True)
-    # plt.savefig('Accuracy.png')
+    # 5. 存圖表
+    plt.figure(figsize=(10, 5))
+    plt.plot(epoch_accuracy, label='Training Loss')
+    plt.grid(True)
+    plt.savefig('Accuracy.png')
 
 
 if __name__ == '__main__':

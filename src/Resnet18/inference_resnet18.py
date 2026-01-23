@@ -115,7 +115,6 @@ def main():
 
     plt.figure(figsize=(10, 5))
 
-
     plt.plot(epoch_accuracy, label='Training Accuracy') 
     plt.title('Training Accuracy Trend') 
     plt.xlabel('Epochs')
