@@ -23,7 +23,7 @@ class GridMask(nn.Module):
         self.r = int(self.d * math.sqrt(self.ratio))
 
         # 2. 建立遮罩基底 (全 1 代表保留，使用 device 確保 GPU 相容)
-        mask = torch.ones((h,w), dtype=torch.float32, devive=img.device)
+        mask = torch.ones((h,w), dtype=torch.float32, device=img.device)
 
         # 3. 生成隨機偏移量 (讓網格每次出現位置不同，避免模型記住位置)
         delta_x = random.randint(0, self.d - 1)
