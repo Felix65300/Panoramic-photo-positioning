@@ -13,13 +13,13 @@ class RandomColorTemperature(nn.Module):
         super().__init__()
         self.min_t, self.max_t = range_temp
 
-        def forward(self, img):
-            # img: Tensor (C, H, W)，數值範圍通常為 [0, 1]
+    def forward(self, img):
+        # img: Tensor (C, H, W)，數值範圍通常為 [0, 1]
 
-            # 決定這次的調整因子
-            factor = random.uniform(self.min_t, self.max_t)
+        # 決定這次的調整因子
+        factor = random.uniform(self.min_t, self.max_t)
 
-            img[0] = img[0] * factor # R 通道
-            img[1] = img[1] * factor # B 通道
+        img[0] = img[0] * factor # R 通道
+        img[1] = img[1] * factor # B 通道
 
-            return torch.clamp(img, 0.0,1.0)
+        return torch.clamp(img, 0.0,1.0)
