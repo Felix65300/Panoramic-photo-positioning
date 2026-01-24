@@ -59,12 +59,12 @@ def model_training ():
     # ---------------------------------------------------
     epoch_losses = []
     best_loss = float('inf')
-    #
-    # if os.path.exists(MODEL_PATH):
-    #     checkpoint = torch.load(MODEL_PATH)
-    #     model.load_state_dict(checkpoint['model_state_dict'])
-    #     best_loss = checkpoint['best_loss']
-    #
+
+    if os.path.exists(MODEL_PATH):
+        checkpoint = torch.load(MODEL_PATH)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        best_loss = checkpoint['best_loss']
+
 
     model.train()
     print("--> 開始訓練...")
@@ -92,18 +92,18 @@ def model_training ():
 
         print(f"Epoch {epoch+1} | Loss: {avg_loss:.4f} | LR: {current_lr:.8f}")
 
-        #
-        # if avg_loss < best_loss:
-        #     best_loss = avg_loss
-        #
-        #     checkpoint = {
-        #         'model_state_dict': model.state_dict(),
-        #         'best_loss': best_loss,
-        #         'epoch': epoch+1
-        #     }
-        #
-        #     torch.save(checkpoint, MODEL_PATH)
-        #
+
+        if avg_loss < best_loss:
+            best_loss = avg_loss
+
+            checkpoint = {
+                'model_state_dict': model.state_dict(),
+                'best_loss': best_loss,
+                'epoch': epoch+1
+            }
+
+            torch.save(checkpoint, MODEL_PATH)
+
 
     return epoch_losses
 

@@ -47,16 +47,16 @@ def resnet18_training_and_testing():
     start_epoch = 0
     best_acc = 0.0
 
-    # if os.path.exists(MODEL_PATH):
-    #     try:
-    #         print(f"Loading weights from {MODEL_PATH}")
-    #         checkpoint = torch.load(MODEL_PATH, map_location=device)
-    #         model.load_state_dict(checkpoint)
-    #         print("Weight loaded successfully.")
-    #     except Exception as e:
-    #         print(f"Loading failed: {e}, training from scratch.")
-    # else:
-    #     print("No existing weights found. Training from scratch.")
+    if os.path.exists(MODEL_PATH):
+        try:
+            print(f"Loading weights from {MODEL_PATH}")
+            checkpoint = torch.load(MODEL_PATH, map_location=device)
+            model.load_state_dict(checkpoint)
+            print("Weight loaded successfully.")
+        except Exception as e:
+            print(f"Loading failed: {e}, training from scratch.")
+    else:
+        print("No existing weights found. Training from scratch.")
 
     epoch_losses = []
     epoch_accs = []
@@ -100,10 +100,10 @@ def resnet18_training_and_testing():
         print(f"Epoch {epoch + 1} Result: Loss={avg_loss:.4f} | Acc={epoch_acc:.2f}% | LR={current_lr:.6f}")
 
         # 存取最佳權重 ---
-        # if epoch_acc > best_acc:
-        #     best_acc = epoch_acc
-        #     torch.save(model.state_dict(), MODEL_PATH)
-        #     print(f"★ New Best Model Saved! (Acc: {best_acc:.2f}%) saved to {MODEL_PATH}")
+        if epoch_acc > best_acc:
+            best_acc = epoch_acc
+            torch.save(model.state_dict(), MODEL_PATH)
+            print(f"★ New Best Model Saved! (Acc: {best_acc:.2f}%) saved to {MODEL_PATH}")
     return epoch_losses, epoch_accs
 
 def main():
