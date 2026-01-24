@@ -20,5 +20,72 @@ def get_dataset(root_dir, width=512, height=128, is_train=True):
 
     return dataset
 
+# if __name__ == "__main__":
+#     print("Testing data.py integration...")
+# ... (上面是你的 get_dataset 函數) ...
+
+# --- 測試與視覺化區塊 ---
 if __name__ == "__main__":
-    print("Testing data.py integration...")
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import torch
+
+    # 1. 設定測試參數
+    # 請換成你電腦裡隨便一個有圖片的資料夾路徑，或者你的 Dataset_Step1 路徑
+    # 假設你的專案結構，我們試著抓上一層的 Dataset
+    TEST_ROOT = r"../Dataset_Step1"  # 👈 請依你的實際路徑修改
+
+    # 防呆：如果路徑不存在，就不要跑
+    if not os.path.exists(TEST_ROOT):
+        print(f"❌ 找不到路徑: {TEST_ROOT}，請修改程式碼中的 TEST_ROOT")
+    else:
+        print(f"🔍 開始檢查資料增強效果，讀取路徑: {TEST_ROOT}")
+
+        # 2. 建立訓練集 (is_train=True 代表會套用所有增強)
+        # 我們故意設 batch_size=4 來抓幾張圖看
+        dataset = get_dataset(root_dir=TEST_ROOT, width=512, height=128, is_train=True)
+        loader = DataLoader(dataset, batch_size=4, shuffle=True)
+
+        # 3. 定義「反標準化」函數 (把 Tensor 變回人類看得懂的圖片)
+        # 因為我們之前做了 (x - mean) / std，現在要 (x * std) + mean
+        mean = np.array([0.485, 0.456, 0.406])
+        std = np.array([0.229, 0.224, 0.225])
+
+
+        def imshow(tensor_img, title=None):
+            # 轉成 Numpy: (C, H, W) -> (H, W, C)
+            img = tensor_img.numpy().transpose((1, 2, 0))
+
+            # 反標準化 (Un-normalize)
+            img = std * img + mean
+
+            # 確保數值在 0~1 之間 (因為浮點數運算可能有極小誤差)
+            img = np.clip(img, 0, 1)
+
+            return img
+
+
+        # 4. 抓一個 Batch 出來顯示
+        data_iter = iter(loader)
+        images, labels = next(data_iter)
+
+        # 5. 畫圖並存檔
+        fig, axes = plt.subplots(len(images), 1, figsize=(10, 8))
+        if len(images) == 1: axes = [axes]  # 防呆
+
+        print(f"📸 正在生成預覽圖...")
+        for idx, img in enumerate(images):
+            ax = axes[idx]
+            # 顯示圖片
+            restored_img = imshow(img)
+            ax.imshow(restored_img)
+            ax.axis('off')
+            ax.set_title(f"Augmented Sample {idx + 1}")
+
+        # 存成檔案讓你看
+        save_path = "check_augmentation.jpg"
+        plt.tight_layout()
+        plt.savefig(save_path)
+        print(f"✅ 檢查完成！圖片已儲存為：{save_path}")
+        print(
+            "請打開這張圖片，確認有沒有看到：\n1. 黑色網格 (GridMask)\n2. 圖片左右平移 (HorizontalRoll)\n3. 顏色偏冷或偏暖 (ColorTemp)")

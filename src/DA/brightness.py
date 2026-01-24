@@ -10,7 +10,7 @@ class RandomBrightness(nn.Module):
         super().__init__()
         # brightness = 0.2 代表亮度在 [0.8, 1.2] 之間隨機變化
         # brightness 設定的是正負的範圍 (例如：正負0.2)
-        self.jitter = transforms.ColorJitter(brightness=brightness, coutrast=contrast)
+        self.jitter = transforms.ColorJitter(brightness=brightness, contrast=contrast)
 
     def forward(self, img):
         return self.jitter(img)
