@@ -10,7 +10,7 @@ project_root = os.path.dirname(parent_dit)
 sys.path.append(parent_dit)
 sys.path.append(project_root)
 
-from src.data_Step1 import get_dataset
+from src.data_Step2 import get_dataset
 from Convolution_Class import CNN
 
 # 參數

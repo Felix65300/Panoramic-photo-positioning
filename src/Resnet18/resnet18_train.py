@@ -21,7 +21,7 @@ sys.path.append(parent_dir)
 sys.path.append(Project_Root)
 
 # Import 自定義模組
-from src.data_Step1 import get_dataset
+from src.data_Step2 import get_dataset
 from resnet18_revised_version import get_pano_model
 
 IMG_WIDTH = 512
