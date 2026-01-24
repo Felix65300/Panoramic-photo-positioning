@@ -4,6 +4,7 @@ from torchvision import transforms
 from .grid_mask import GridMask
 from .color_temperature import RandomColorTemperature
 from .brightness import RandomBrightness
+from .horizontal_roll import RandomHorizontalRoll
 
 def get_transforms(img_width = 512, img_height=128, is_train=True):
     """
@@ -11,11 +12,19 @@ def get_transforms(img_width = 512, img_height=128, is_train=True):
     """
     transform_list = []
 
-    # 1. 基礎處理：縮放 + 轉 Tensor
+    # 1. Resize (PIL -> PIL)
     transform_list.append(transforms.Resize((img_height, img_width)))
+
+    # 2. 訓練階段的 PIL 層級增強 (Data Augmentation)
+    if is_train:
+        # 🔥 環景圖核心增強：左右平移
+        # 放在 ToTensor 之前，因為它是針對像素矩陣操作
+        transform_list.append(RandomHorizontalRoll())
+
+    # 3. 轉 Tensor (PIL -> Tensor, 0~1)
     transform_list.append(transforms.ToTensor())
 
-    # 2. 訓練階段才做的資料增強 (Data Augmentation
+    # 4. 訓練階段 Tensor 層級增強 (Data Augmentation)
     if is_train:
         # --- A. 亮度與對比度 ---
         transform_list.append(RandomBrightness(brightness=0.2,contrast=0.2))
@@ -27,7 +36,7 @@ def get_transforms(img_width = 512, img_height=128, is_train=True):
         # 固定 10% 遮罩率，週期為 32
         transform_list.append(GridMask(d = 32, ratio=0.1))
 
-    # 3. 標準化 (讓模型訓練數值更穩定)
+    # 5. 標準化 (讓模型訓練數值更穩定)
     # 使用 ImageNet 的標準平均值與標準差
     transform_list.append(transforms.Normalize(mean=[0.485,0.456,0.406],
                                                sts=[0.229,0.224,0.225]))
