@@ -39,7 +39,7 @@ def get_transforms(img_width = 512, img_height=128, is_train=True):
     # 5. 標準化 (讓模型訓練數值更穩定)
     # 使用 ImageNet 的標準平均值與標準差
     transform_list.append(transforms.Normalize(mean=[0.485,0.456,0.406],
-                                               sts=[0.229,0.224,0.225]))
+                                               std=[0.229,0.224,0.225]))
 
     # 將列表組合成一個 transform popline
     return transforms.Compose(transform_list)
