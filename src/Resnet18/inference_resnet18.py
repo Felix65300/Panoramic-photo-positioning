@@ -21,7 +21,7 @@ sys.path.append(Project_Root)
 
 
 # Import 自定義模組
-from src.data import get_dataset
+from src.data_Step1 import get_dataset
 from resnet18_revised_version import get_pano_model
 
 # ---------------------------------------------------------

@@ -2,7 +2,7 @@ import os
 import sys
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# data.py 跨資料夾，所以需要額外動作來輔助 import
+# data_Step1.py 跨資料夾，所以需要額外動作來輔助 import
 # 1. 取得目前檔案的 (Training.py) 所在目錄
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -22,7 +22,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import  matplotlib.pyplot as plt
 from tqdm import tqdm
-from src.data import get_dataset
+from src.data_Step1 import get_dataset
 from Convolution_Class import CNN
 
 # ---------------------------------
@@ -39,7 +39,7 @@ MODEL_PATH = 'pano_cnn_model.pth'
 
 def model_training ():
     # ----------------------------------
-    # 2. 準備資料 (呼叫 data.py)
+    # 2. 準備資料 (呼叫 data_Step1.py)
     # ----------------------------------
     train_dataset = get_dataset(TRAIN_DIR,IMG_WIDTH,IMG_HEIGHT,is_train=True)
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)

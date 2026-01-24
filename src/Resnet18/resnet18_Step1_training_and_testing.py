@@ -14,7 +14,7 @@ Project_Root = os.path.dirname(parent_dir)
 sys.path.append(parent_dir)
 sys.path.append(Project_Root)
 
-from src.data import get_dataset
+from src.data_Step1 import get_dataset
 from resnet18_revised_version import get_pano_model
 
 IMG_WIDTH = 512
