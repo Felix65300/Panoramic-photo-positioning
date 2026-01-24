@@ -20,7 +20,7 @@ from Convolution_Class import CNN
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 BATCH_SIZE = 16
-DEVIVE = torch.device("cuda")
+DEVICE = torch.device("cuda")
 IMG_PATH = os.path.join(Project_Root, "Dataset_Step1")
 epochs = 200
 
@@ -37,8 +37,8 @@ def model_training_and_testing():
     )
 
     model = CNN()
-    model = model.to(DEVIVE)
-    criterion = nn.CrossEntropyLoss().to(DEVIVE)
+    model = model.to(DEVICE)
+    criterion = nn.CrossEntropyLoss().to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode='min', factor=0.5, patience=10, min_lr=1e-6
@@ -50,7 +50,7 @@ def model_training_and_testing():
     if os.path.exists(MODEL_PATH):
         try:
             print(f"Loading weights from {MODEL_PATH}")
-            checkpoint = torch.load(MODEL_PATH, map_location=device)
+            checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
             model.load_state_dict(checkpoint)
             print("Weight loaded successfully.")
         except Exception as e:
@@ -71,7 +71,7 @@ def model_training_and_testing():
 
         with tqdm(trainloader, desc=f"Epoch {epoch + 1}/{epochs}", ncols=100, leave=False) as loop:
             for img, id_label in loop:
-                img, id_label = img.to(DEVIVE), id_label.to(DEVIVE)
+                img, id_label = img.to(DEVICE), id_label.to(DEVICE)
 
                 optimizer.zero_grad()
 
@@ -94,7 +94,7 @@ def model_training_and_testing():
         avg_loss = running_loss / len(trainloader)
         epoch_losses.append(avg_loss)
         epoch_accs.append(epoch_acc)
-        current_lr = scheduler.get_last_lr()[0]
+        current_lr = optimizer.param_groups[0]['lr']
 
         scheduler.step(avg_loss)
         print(f"Epoch {epoch + 1} Result: Loss={avg_loss:.4f} | Acc={epoch_acc:.2f}% | LR={current_lr:.6f}")
