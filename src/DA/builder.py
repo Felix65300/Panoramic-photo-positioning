@@ -5,7 +5,7 @@ from .grid_mask import GridMask
 from .color_temperature import RandomColorTemperature
 from .brightness import RandomBrightness
 
-def get_transform(img_width = 512, img_height=128, is_train=True):
+def get_transforms(img_width = 512, img_height=128, is_train=True):
     """
     工廠函數：根據需求組裝所有資料增強模組
     """
