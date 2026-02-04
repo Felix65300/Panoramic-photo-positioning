@@ -16,7 +16,7 @@ sys.path.append(Resnet18)
 sys.path.append(src)
 sys.path.append(Project_Root)
 
-from src.data_Step2 import get_dataset
+from src.data_Step1 import get_dataset
 from src.Resnet18.resnet18_revised_version import get_pano_model
 
 IMG_WIDTH = 512
