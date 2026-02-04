@@ -8,14 +8,16 @@ from tqdm import tqdm
 
 # 路徑設定
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-Project_Root = os.path.dirname(parent_dir)
+Resnet18 = os.path.dirname(current_dir)
+src = os.path.dirname(Resnet18)
+Project_Root = os.path.dirname(src)
 
-sys.path.append(parent_dir)
+sys.path.append(Resnet18)
+sys.path.append(src)
 sys.path.append(Project_Root)
 
 from src.data_Step2 import get_dataset
-from resnet18_revised_version import get_pano_model
+from src.Resnet18.resnet18_revised_version import get_pano_model
 
 IMG_WIDTH = 512
 IMG_HEIGHT = 128

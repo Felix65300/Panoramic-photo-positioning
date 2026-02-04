@@ -10,8 +10,8 @@ fig_dir = os.path.join(Project_Root, 'Figures')
 resnet18_dir = os.path.join(src, "Resnet18")
 sys.path.append(model_dir)
 sys.path.append(resnet18_dir)
-from src.Custom_model.Step1.Step1_training_and_testing import model_training_and_testing
-from src.Resnet18.Step1.resnet18_Step1_training_and_testing import resnet18_training_and_testing
+from src.Custom_model.Step2.Step2_Training_and_Inference import
+from src.Resnet18.Step2
 
 # --- 1. 全局設置：讓圖片更符合論文要求 ---
 plt.rcParams.update({

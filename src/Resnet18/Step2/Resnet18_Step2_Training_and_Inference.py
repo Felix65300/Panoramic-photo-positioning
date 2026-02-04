@@ -4,45 +4,31 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from tqdm import tqdm 
-
-# 環境變數設定
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+from tqdm import tqdm
 
 # 路徑設定
 current_dir = os.path.dirname(os.path.abspath(__file__))
-Resnet18 = os.path.dirname(current_dir)
-src = os.path.dirname(Resnet18)
-Project_Root = os.path.dirname(src)
+parent_dir = os.path.dirname(current_dir)
+Project_Root = os.path.dirname(parent_dir)
 
-sys.path.append(Resnet18)
-sys.path.append(src)
+sys.path.append(parent_dir)
 sys.path.append(Project_Root)
 
-# Import 自定義模組
 from src.data_Step2 import get_dataset
-from src.Resnet18.resnet18_revised_version import get_pano_model
+from resnet18_revised_version import get_pano_model
 
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 BATCH_SIZE = 128
+DEVIVE = torch.device("cuda")
+IMG_PATH = os.path.join(Project_Root, "Dataset_Step1")
 epochs = 200
 
-# 權重檔案名稱
 MODEL_PATH = os.path.join(current_dir, 'resnet18_pano_1000classes_optimized.pth')
 
-def resnet18_training():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def resnet18_training_and_testing():
+    dataset = get_dataset(root_dir=IMG_PATH, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=True)
 
-    img_path = os.path.join(Project_Root, "Dataset_Step1")
-
-    # 1. 載入 Dataset
-    dataset = get_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=True)
-
-    # DataLoader
     trainloader = DataLoader(
         dataset=dataset,
         batch_size=BATCH_SIZE,
@@ -52,16 +38,14 @@ def resnet18_training():
         persistent_workers=True
     )
 
-    # 2. 定義模型、損失函數、優化器、學習率調整器
     model = get_pano_model(num_classes=1000, pretrained=False)
-    model = model.to(device)
+    model = model.to(DEVIVE)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=0)  # weight_decay=0
+    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=0)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=1e-6)
 
-    # 3. 嘗試載入先前的權重 (Resume)
     start_epoch = 0
-    best_acc = 0.0  # 用來記錄歷來最高準確率
+    best_acc = 0.0
 
     if os.path.exists(MODEL_PATH):
         try:
@@ -75,8 +59,9 @@ def resnet18_training():
         print("No existing weights found. Training from scratch.")
 
     epoch_losses = []
+    epoch_accs = []
 
-    print("Start Training...")
+    print("Resnet 18 Start training...")
 
     for epoch in range(start_epoch, epochs):
         model.train()
@@ -84,40 +69,32 @@ def resnet18_training():
         correct = 0
         total = 0
 
-        # 使用 tqdm 顯示進度
-        with tqdm(trainloader, desc=f"Epoch {epoch + 1}/{epochs}", ncols=100, leave=True) as loop:
+        with tqdm(trainloader, desc=f"Epoch {epoch + 1}/{epochs}", ncols=100, leave=False) as loop:
             for img, id_label in loop:
-                img, id_label = img.to(device), id_label.to(device)
+                img, id_label = img.to(DEVIVE), id_label.to(DEVIVE)
 
-                # 1. 梯度歸零
                 optimizer.zero_grad()
-                # 2. Forward
+
                 outputs = model(img)
                 loss = criterion(outputs, id_label)
-                # 3. Backward
                 loss.backward()
-                # 梯度裁剪
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=2.0)
-                # 4. Update
                 optimizer.step()
 
-                # --- 統計 ---
                 running_loss += loss.item()
                 _, predicted = torch.max(outputs.data, 1)
                 total += id_label.size(0)
                 correct += (predicted == id_label).sum().item()
 
-                # 即時顯示
                 current_acc = 100 * correct / total
                 loop.set_postfix(loss=f"{loss.item():.4f}", acc=f"{current_acc:.2f}%")
 
-        # 更新 Learning Rate
         scheduler.step()
 
-        # 計算 Epoch 結果
         epoch_acc = 100 * correct / total
         avg_loss = running_loss / len(trainloader)
         epoch_losses.append(avg_loss)
+        epoch_accs.append(epoch_acc)
         current_lr = scheduler.get_last_lr()[0]
 
         print(f"Epoch {epoch + 1} Result: Loss={avg_loss:.4f} | Acc={epoch_acc:.2f}% | LR={current_lr:.6f}")
@@ -127,27 +104,10 @@ def resnet18_training():
             best_acc = epoch_acc
             torch.save(model.state_dict(), MODEL_PATH)
             print(f"★ New Best Model Saved! (Acc: {best_acc:.2f}%) saved to {MODEL_PATH}")
-    return epoch_losses
+    return epoch_losses, epoch_accs
 
 def main():
-    epoch_losses = resnet18_training()
-    # 繪圖部分
-    plt.figure(figsize=(10, 5))
-    plt.plot(epoch_losses, label='Training Loss')
-    plt.title('Training Loss Trend')
-    plt.xlabel('Epochs')
-    plt.ylabel('Average Loss')
-    plt.legend()
-    plt.grid(True)
-    
-    if epochs > 20:
-        plt.xticks(range(0, epochs, 5)) 
-    else:
-        plt.xticks(range(0, epochs, 1))
+    _,_ = resnet18_training_and_testing()
 
-    plot_save_path = os.path.join(current_dir,'resnet18_loss_curve.png')
-    plt.savefig(plot_save_path)
-    print(f"Training finished! Loss chart saved as {plot_save_path}")
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
