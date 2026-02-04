@@ -2,7 +2,7 @@ import os
 import sys
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# data.py 跨資料夾，所以需要額外動作來輔助 import
+# data_Step1.py 跨資料夾，所以需要額外動作來輔助 import
 # 1. 取得目前檔案的 (Training.py) 所在目錄
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -22,7 +22,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import  matplotlib.pyplot as plt
 from tqdm import tqdm
-from src.data import get_dataset
+from src.data_Step2 import get_dataset
 from Convolution_Class import CNN
 
 # ---------------------------------
@@ -39,7 +39,7 @@ MODEL_PATH = 'pano_cnn_model.pth'
 
 def model_training ():
     # ----------------------------------
-    # 2. 準備資料 (呼叫 data.py)
+    # 2. 準備資料 (呼叫 data_Step1.py)
     # ----------------------------------
     train_dataset = get_dataset(TRAIN_DIR,IMG_WIDTH,IMG_HEIGHT,is_train=True)
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -59,12 +59,12 @@ def model_training ():
     # ---------------------------------------------------
     epoch_losses = []
     best_loss = float('inf')
-    #
-    # if os.path.exists(MODEL_PATH):
-    #     checkpoint = torch.load(MODEL_PATH)
-    #     model.load_state_dict(checkpoint['model_state_dict'])
-    #     best_loss = checkpoint['best_loss']
-    #
+
+    if os.path.exists(MODEL_PATH):
+        checkpoint = torch.load(MODEL_PATH)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        best_loss = checkpoint['best_loss']
+
 
     model.train()
     print("--> 開始訓練...")
@@ -92,18 +92,18 @@ def model_training ():
 
         print(f"Epoch {epoch+1} | Loss: {avg_loss:.4f} | LR: {current_lr:.8f}")
 
-        #
-        # if avg_loss < best_loss:
-        #     best_loss = avg_loss
-        #
-        #     checkpoint = {
-        #         'model_state_dict': model.state_dict(),
-        #         'best_loss': best_loss,
-        #         'epoch': epoch+1
-        #     }
-        #
-        #     torch.save(checkpoint, MODEL_PATH)
-        #
+
+        if avg_loss < best_loss:
+            best_loss = avg_loss
+
+            checkpoint = {
+                'model_state_dict': model.state_dict(),
+                'best_loss': best_loss,
+                'epoch': epoch+1
+            }
+
+            torch.save(checkpoint, MODEL_PATH)
+
 
     return epoch_losses
 
