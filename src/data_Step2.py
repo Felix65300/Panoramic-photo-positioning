@@ -46,44 +46,32 @@ def get_sample():
         mean = np.array([0.485, 0.456, 0.406])
         std = np.array([0.229, 0.224, 0.225])
 
+        # 4. 抓取一個 Batch 的資料
+        images, labels = next(iter(loader))
 
-        def imshow(tensor_img, title=None):
-            # 轉成 Numpy: (C, H, W) -> (H, W, C)
-            img = tensor_img.numpy().transpose((1, 2, 0))
+        # 5. 設定畫布 (一橫排顯示 4 張圖)
+        fig, axes = plt.subplots(1, 4, figsize=(20, 5))
+        fig.suptitle("Data Augmentation Preview (Felix's Dataset)", fontsize=16)
 
-            # 反標準化 (Un-normalize)
+        for i in range(4):
+            # 取出單張 Tensor 並轉為 Numpy
+            img = images[i].numpy().transpose((1, 2, 0))  # [C, H, W] -> [H, W, C]
+
+            # 執行反標準化： $Original = (Tensor \times std) + mean$
             img = std * img + mean
 
-            # 確保數值在 0~1 之間 (因為浮點數運算可能有極小誤差)
+            # 修正數值範圍，避免因為浮點數誤差導致超出 [0, 1] 產生警告
             img = np.clip(img, 0, 1)
 
-            return img
+            # 繪圖
+            axes[i].imshow(img)
+            axes[i].set_title(f"Label: {labels[i].item():.2f}")  # 假設標籤是連續值
+            axes[i].axis('off')  # 隱藏座標軸讓畫面乾淨
 
-
-        # 4. 抓一個 Batch 出來顯示
-        data_iter = iter(loader)
-        images, labels = next(data_iter)
-
-        # 5. 畫圖並存檔
-        fig, axes = plt.subplots(len(images), 1, figsize=(10, 8))
-        if len(images) == 1: axes = [axes]  # 防呆
-
-        print(f"📸 正在生成預覽圖...")
-        for idx, img in enumerate(images):
-            ax = axes[idx]
-            # 顯示圖片
-            restored_img = imshow(img)
-            ax.imshow(restored_img)
-            ax.axis('off')
-            ax.set_title(f"Augmented Sample {idx + 1}")
-
-        # 存成檔案讓你看
-        save_path = "check_augmentation.jpg"
+        # 6. 關鍵：直接跳出視窗預覽
         plt.tight_layout()
-        plt.savefig(save_path)
-        print(f"✅ 檢查完成！圖片已儲存為：{save_path}")
-        print(
-            "請打開這張圖片，確認有沒有看到：\n1. 黑色網格 (GridMask)\n2. 圖片左右平移 (HorizontalRoll)\n3. 顏色偏冷或偏暖 (ColorTemp)")
+        plt.show()
+
 
 if __name__ == "__main__":
     print("Testing data.py integration...")
