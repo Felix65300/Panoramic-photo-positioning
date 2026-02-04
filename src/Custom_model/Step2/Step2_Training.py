@@ -25,7 +25,7 @@ from torch.utils.data import DataLoader
 import  matplotlib.pyplot as plt
 from tqdm import tqdm
 from src.data_Step2 import get_dataset
-from Custom_model.Convolution_Class import CNN
+from src.Custom_model.Convolution_Class import CNN
 
 # ---------------------------------
 # 1. 設定參數與裝置
