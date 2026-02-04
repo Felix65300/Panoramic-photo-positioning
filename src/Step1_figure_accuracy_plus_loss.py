@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from pathlib import Path
 import numpy as np
 import os
 import sys
@@ -11,7 +10,7 @@ fig_dir = os.path.join(Project_Root, 'Figures')
 resnet18_dir = os.path.join(src, "Resnet18")
 sys.path.append(model_dir)
 sys.path.append(resnet18_dir)
-from Custom_model.Step1_training_and_testing import model_training_and_testing
+from src.Custom_model.Step1.Step1_training_and_testing import model_training_and_testing
 from Resnet18.resnet18_Step1_training_and_testing import resnet18_training_and_testing
 
 # --- 1. 全局設置：讓圖片更符合論文要求 ---
