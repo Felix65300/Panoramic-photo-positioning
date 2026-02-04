@@ -1,4 +1,12 @@
-from Convolution_Class import CNN
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+Custom_model = os.path.dirname(current_dir)
+src = os.path.dirname(Custom_model)
+sys.path.append(Custom_model)
+sys.path.append(src)
+
+from src.Custom_model.Convolution_Class import CNN
 import torch
 
 cnn = CNN().to("cuda")

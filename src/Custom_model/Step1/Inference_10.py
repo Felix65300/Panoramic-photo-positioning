@@ -5,13 +5,15 @@ from torch.utils.data import DataLoader
 
 # --- 路徑設定 ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dit = os.path.dirname(current_dir)
-project_root = os.path.dirname(parent_dit)
-sys.path.append(parent_dit)
+Custom_model = os.path.dirname(current_dir)
+src = os.path.dirname(Custom_model)
+project_root = os.path.dirname(src)
+sys.path.append(Custom_model)
+sys.path.append(src)
 sys.path.append(project_root)
 
 from src.data_Step2 import get_dataset
-from Convolution_Class import CNN
+from src.Custom_model.Convolution_Class import CNN
 
 # 參數
 MODEL_PATH = 'Step1_pano_cnn_model.pth'

@@ -7,11 +7,13 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # 2. 取得上一層目錄 (專案的根目錄)
-parent_dir = os.path.dirname(current_dir)
-Project_Root = os.path.dirname(parent_dir)
+Custom_model = os.path.dirname(current_dir)
+src = os.path.dirname(Custom_model)
+Project_Root = os.path.dirname(src)
 
 # 3. 將根目錄加入系統搜尋路徑
-sys.path.append(parent_dir)
+sys.path.append(Custom_model)
+sys.path.append(src)
 sys.path.append(Project_Root)
 
 # 4. 開始 import
@@ -23,7 +25,7 @@ from torch.utils.data import DataLoader
 import  matplotlib.pyplot as plt
 from tqdm import tqdm
 from src.data_Step2 import get_dataset
-from Convolution_Class import CNN
+from src.Custom_model.Convolution_Class import CNN
 
 # ---------------------------------
 # 1. 設定參數與裝置

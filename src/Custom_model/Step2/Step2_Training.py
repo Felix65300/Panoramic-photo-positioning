@@ -37,7 +37,7 @@ IMG_WIDTH = 512
 IMG_HEIGHT = 128
 DEVICE = torch.device('cuda')
 TRAIN_DIR = os.path.join(Project_Root, "Dataset_Step1")
-MODEL_PATH = 'Step1_pano_cnn_model.pth'
+MODEL_PATH = 'Step2_pano_cnn_model.pth'
 
 def model_training ():
     # ----------------------------------

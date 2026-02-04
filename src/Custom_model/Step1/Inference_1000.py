@@ -6,13 +6,15 @@ from tqdm import tqdm
 
 # --- 路徑設定 ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-project_root = os.path.dirname(parent_dir)
-sys.path.append(parent_dir)
+Custom_model = os.path.dirname(current_dir)
+src = os.path.dirname(Custom_model)
+project_root = os.path.dirname(src)
+sys.path.append(Custom_model)
+sys.path.append(src)
 sys.path.append(project_root)
 
 from src.data_Step2 import get_dataset
-from Convolution_Class import CNN
+from src.Custom_model.Convolution_Class import CNN
 from matplotlib import pyplot as plt
 # ---------------------------------------------------------
 # 參數設定

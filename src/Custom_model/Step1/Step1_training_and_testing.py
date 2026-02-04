@@ -8,14 +8,16 @@ from tqdm import tqdm
 
 # 路徑設定
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-Project_Root = os.path.dirname(parent_dir)
+Custom_model = os.path.dirname(current_dir)
+src = os.path.dirname(Custom_model)
+Project_Root = os.path.dirname(src)
 
-sys.path.append(parent_dir)
+sys.path.append(Custom_model)
+sys.path.append(src)
 sys.path.append(Project_Root)
 
 from src.data_Step2 import get_dataset
-from Convolution_Class import CNN
+from src.Custom_model.Convolution_Class import CNN
 
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
