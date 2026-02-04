@@ -12,6 +12,7 @@ sys.path.append(model_dir)
 sys.path.append(resnet18_dir)
 from src.Custom_model.Step2.Step2_Training_and_Inference import model_training_and_testing
 from src.Resnet18.Step2.Resnet18_Step2_Training_and_Inference import resnet18_training_and_testing
+from src.data_Step2 import get_sample
 
 # --- 1. 全局設置：讓圖片更符合論文要求 ---
 plt.rcParams.update({
@@ -37,6 +38,7 @@ color_resnet18 = '#d62728' # 紅
 epochs = np.arange(1, 201)
 
 def main():
+    get_sample()
     model_losses, model_accs = model_training_and_testing()
     resnet18_losses,resnet18_accs = resnet18_training_and_testing()
 
