@@ -16,7 +16,7 @@ sys.path.append(Custom_model)
 sys.path.append(src)
 sys.path.append(Project_Root)
 
-from src.data_Step1 import get_dataset
+from src.data_Step2 import get_dataset
 from src.Custom_model.Convolution_Class import CNN
 
 IMG_WIDTH = 512
@@ -26,7 +26,7 @@ DEVICE = torch.device("cuda")
 IMG_PATH = os.path.join(Project_Root, "Dataset_Step1")
 epochs = 200
 
-MODEL_PATH = os.path.join(current_dir, 'Step1_pano_cnn_model.pth')
+MODEL_PATH = os.path.join(current_dir, 'Step2_pano_cnn_model.pth')
 
 
 def model_training_and_testing():

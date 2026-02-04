@@ -13,7 +13,7 @@ sys.path.append(Custom_model)
 sys.path.append(src)
 sys.path.append(project_root)
 
-from src.data_Step2 import get_dataset
+from src.data_Step1 import get_dataset
 from src.Custom_model.Convolution_Class import CNN
 from matplotlib import pyplot as plt
 # ---------------------------------------------------------
