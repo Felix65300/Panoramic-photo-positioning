@@ -10,8 +10,8 @@ fig_dir = os.path.join(Project_Root, 'Figures')
 resnet18_dir = os.path.join(src, "Resnet18")
 sys.path.append(model_dir)
 sys.path.append(resnet18_dir)
-from src.Custom_model.Step2.Step2_Training_and_Inference import
-from src.Resnet18.Step2
+from src.Custom_model.Step2.Step2_Training_and_Inference import model_training_and_testing
+from src.Resnet18.Step2.Resnet18_Step2_Training_and_Inference import resnet18_training_and_testing
 
 # --- 1. 全局設置：讓圖片更符合論文要求 ---
 plt.rcParams.update({
@@ -88,7 +88,7 @@ def main():
     # 儲存圖片
     # dpi=300 是印刷品質的標準
     # bbox_inches='tight' 確保儲存時去除多餘白邊
-    save_path = os.path.join(fig_dir, 'Loss_curve_and_Accuracy.png')
+    save_path = os.path.join(fig_dir, 'Step2_Loss_curve_and_Accuracy(許韡瀚).png')
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
     print(f"圖片已儲存至: {save_path}")
