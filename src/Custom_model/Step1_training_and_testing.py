@@ -24,7 +24,7 @@ DEVICE = torch.device("cuda")
 IMG_PATH = os.path.join(Project_Root, "Dataset_Step1")
 epochs = 200
 
-MODEL_PATH = os.path.join(current_dir, 'pano_cnn_model.pth')
+MODEL_PATH = os.path.join(current_dir, 'Step1_pano_cnn_model.pth')
 
 
 def model_training_and_testing():
