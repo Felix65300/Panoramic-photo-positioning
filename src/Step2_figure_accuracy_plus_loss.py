@@ -90,7 +90,7 @@ def main():
     # 儲存圖片
     # dpi=300 是印刷品質的標準
     # bbox_inches='tight' 確保儲存時去除多餘白邊
-    save_path = os.path.join(fig_dir, 'Step2_Loss_curve_and_Accuracy(許韡瀚).png')
+    save_path = os.path.join(fig_dir, 'Step2_Loss_curve_and_Accuracy(王浩閔).png')
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
     print(f"圖片已儲存至: {save_path}")
