@@ -1,12 +1,10 @@
 import glob
 import os
-import sys
-import shutil
 import torch
-import tqdm
 import numpy as np
 from PIL import Image
 from pathlib import Path
+from tqdm import tqdm
 import torchvision.transforms as T
 import torchvision.transforms.functional as F
 
@@ -21,26 +19,28 @@ import src.DA.brightness
 from src.DA.brightness import RandomBrightness
 
 
-def generate_samples(image_path,ratios,id=id):
+def generate_samples(image_path,ratios,int_id=id):
 
     original_filename = os.path.basename(image_path)
+    id = f'{int_id:03d}'
     # 🚀 2. 載入並預處理圖片 (維持 4:1，縮放至 512x128)
-    img_pil = Image.open(image_path).convert('RGB')
-    transform_base = T.Compose([
-        T.Resize((182, 512)), # PyTorch Resize 格視為 (H,W)
-        T.ToTensor()
-    ])
-    img_tensor = transform_base(img_pil)
+    with Image.open(image_path).convert('RGB') as img:
+        transform_base = T.Compose([
+            T.Resize((182, 512)), # PyTorch Resize 格視為 (H,W)
+            T.ToTensor()
+        ])
+        img_tensor = transform_base(img)
 
     for ratio in ratios:
         api = RandomBrightness(brightness = float(ratio))
         percent_val = int(round(ratio * 100))
         dir_name = f"{percent_val}%"
 
-        save_path = os.path.join(TARGET_DIR, dir_name)
-        save_path = Path(TARGET_DIR) / dir_name / id / original_filename
+        save_path = Path(TARGET_DIR) / dir_name / id
 
         save_path.mkdir(parents=True, exist_ok=True)
+
+        save_path = save_path / original_filename
 
         # 執行強化 (在 no_grad 下執行，避免計算圖佔用記憶體)
         with torch.no_grad():
@@ -94,8 +94,9 @@ def check_api(api_class,expected_shape,**kwargs):
 if __name__ == "__main__":
     ratios = np.arange(0.0, 2.1, 0.1)
     source_dir = os.path.join(PROJECT_ROOT, 'Dataset_Step1')
-    for id in range(0,1000):
+
+    for id in tqdm(range(0, 1000), desc="正在處理圖片"):
         img_dir = os.path.join(source_dir, f'{id:03d}')
         search_pattern = os.path.join(img_dir, "*.jpg")
         img_path = glob.glob(search_pattern)[0]
-        generate_samples(image_path=img_path,ratios=ratios,id=id)
+        generate_samples(image_path=img_path,ratios=ratios,int_id=id)

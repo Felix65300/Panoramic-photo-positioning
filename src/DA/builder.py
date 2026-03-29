@@ -27,10 +27,10 @@ def get_transforms(img_width = 512, img_height=128, is_train=True):
     # 4. 訓練階段 Tensor 層級增強 (Data Augmentation)
     if is_train:
         # --- A. 亮度與對比度 ---
-        transform_list.append(RandomBrightness(brightness=0.2,contrast=0.2))
+        transform_list.append(RandomBrightness(brightness=0.2))
 
         # --- B. 色溫調整 ---
-        transform_list.append(RandomColorTemperature(range_temp=(0.8,1.2)))
+        transform_list.append(RandomColorTemperature(ratio = 0.8))
 
         # --- C. 網格遮罩 ---
         # 固定 10% 遮罩率，週期為 32
