@@ -3,8 +3,7 @@ import torchvision.transforms.functional as F
 
 class RandomBrightness(nn.Module):
     """
-    隨機調整料度與對比度
-    封裝 torchvision.transforms.ColorJitter 以保持介面一致 (原用)
+    隨機調整料度
     """
     def __init__(self, brightness = 0.2):
         super().__init__()
