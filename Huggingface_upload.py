@@ -13,7 +13,7 @@ def upload_dataset():
 
     print(f"☁️ 準備推送到 Hugging Face Hub ({REPO_NAME})...")
     # private=True 設定為私人，防止資料集外傳
-    dataset.upload(REPO_NAME,private=True)
+    dataset.push_to_hub(REPO_NAME,private=True)
 
     print("✅ 上傳完成！")
 
