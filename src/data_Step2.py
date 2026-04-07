@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
 
 # 測試版 main (會有增強後的成果預覽圖)，使用時將上面的 main 註解，並把 28 行開始解除註解即可使用
-# # --- 測試與視覺化區塊 ---
+# --- 測試與視覺化區塊 ---
 # if __name__ == "__main__":
 #     import matplotlib.pyplot as plt
 #     import numpy as np
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 #     # 1. 設定測試參數
 #     # 請換成你電腦裡隨便一個有圖片的資料夾路徑，或者你的 Dataset_Step1 路徑
 #     # 假設你的專案結構，我們試著抓上一層的 Dataset
-#     TEST_ROOT = r"../Dataset_Step1"  # 👈 請依你的實際路徑修改
+#     TEST_ROOT = r"../Dataset_Step1"
 #
 #     # 防呆：如果路徑不存在，就不要跑
 #     if not os.path.exists(TEST_ROOT):
@@ -136,10 +136,10 @@ if __name__ == "__main__":
 #             ax.axis('off')
 #             ax.set_title(f"Augmented Sample {idx + 1}")
 #
-#         # 存成檔案讓你看
-#         save_path = "check_augmentation.jpg"
-#         plt.tight_layout()
-#         plt.savefig(save_path)
-#         print(f"✅ 檢查完成！圖片已儲存為：{save_path}")
-#         print(
-#             "請打開這張圖片，確認有沒有看到：\n1. 黑色網格 (GridMask)\n2. 圖片左右平移 (HorizontalRoll)\n3. 顏色偏冷或偏暖 (ColorTemp)")
+#         plt.show()
+        # 存成檔案讓你看
+        # save_path = "check_augmentation.jpg"
+        # plt.tight_layout()
+        # plt.savefig(save_path)
+        # print(f"✅ 檢查完成！圖片已儲存為：{save_path}")
+        # print("請打開這張圖片，確認有沒有看到：\n1. 黑色網格 (GridMask)\n2. 圖片左右平移 (HorizontalRoll)\n3. 顏色偏冷或偏暖 (ColorTemp)")
