@@ -1,4 +1,5 @@
 from huggingface_hub import HfApi
+from datasets import load_dataset
 
 def upload_to_huggingface():
     # 🚀 1. 初始化 API
@@ -19,5 +20,14 @@ def upload_to_huggingface():
 
     print("✅ 所有圖片上傳完畢！")
 
+def verify_upload():
+
+        # 直接讀取你的新組織專案
+        dataset = load_dataset("Panoramic-photo-positioning/Panoramic-photo-positioning-Step2")
+
+        print("-" * 30)
+        # dataset['train'] 是預設的 split
+        print(f"✅ 解析成功！PyTorch DataLoader 可讀取的總筆數為：{dataset['train'].num_rows}")
 if __name__ == "__main__":
-    upload_to_huggingface()
+    # upload_to_huggingface()
+    verify_upload()
