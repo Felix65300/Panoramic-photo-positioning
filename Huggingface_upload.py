@@ -29,5 +29,5 @@ def verify_upload():
         # dataset['train'] 是預設的 split
         print(f"✅ 解析成功！PyTorch DataLoader 可讀取的總筆數為：{dataset['train'].num_rows}")
 if __name__ == "__main__":
-    # upload_to_huggingface()
-    verify_upload()
+    upload_to_huggingface()
+    # verify_upload()
