@@ -16,7 +16,7 @@ class GridMask(nn.Module):
 
     def forward(self, img):
         # img: Tensor (C, H, W)
-        _, h, w = img.size()
+        h, w = img.size()[-2:]
 
         # 1. 計算遮蓋邊長 r，確保總面積遮蓋率固定為 ratio
         # 公式推導：r = d * sqrt(ratio)
