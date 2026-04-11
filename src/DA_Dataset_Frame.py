@@ -12,10 +12,9 @@ src = os.path.dirname(os.path.abspath(__file__))
 
 PROJECT_ROOT = os.path.dirname(src)
 
-TARGET_DIR = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step2/Grid_Mask')
+TARGET_DIR = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step2/')
 
 # 🚀 1. 引入寫好的 API
-import src.DA.brightness
 from src.DA.grid_mask import GridMask
 
 
@@ -100,7 +99,7 @@ def check_api(api_class,expected_shape,**kwargs):
 # ==========================================
 
 if __name__ == "__main__":
-    ratios = np.arange(0.0, 1.1, 0.1)
+    ratios = np.arange(0.0, 2.1, 0.1)
     source_dir = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step1')
 
     for id in tqdm(range(0, 1000), desc="正在處理圖片"):
