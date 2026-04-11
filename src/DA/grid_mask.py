@@ -16,7 +16,7 @@ class GridMask(nn.Module):
 
     def forward(self, img):
         # img: Tensor (C, H, W)
-        _, h, w = img.size()
+        _, _, h, w = img.size()
 
         # 1. 計算遮蓋邊長 r，確保總面積遮蓋率固定為 ratio
         # 公式推導：r = d * sqrt(ratio)
@@ -26,13 +26,15 @@ class GridMask(nn.Module):
         mask = torch.ones((h,w), dtype=torch.float32, device=img.device)
 
         # 3. 生成隨機偏移量 (讓網格每次出現位置不同，避免模型記住位置)
-        delta_x = random.randint(0, self.d - 1)
-        delta_y = random.randint(0, self.d - 1)
+        # delta_x = random.randint(0, self.d - 1)
+        # delta_y = random.randint(0, self.d - 1)
 
         # 4. 挖洞邏輯 (將特定區域設為 0)
         # 使用切片 (Slicing) 取代迴圈，提升運算效率
-        for y in range(delta_y,h,self.d):
-            for x in range(delta_x,w,self.d):
+        # for y in range(delta_y,h,self.d):
+        #     for x in range(delta_x,w,self.d):
+        for y in range(0,h,self.d):
+            for x in range(0,w,self.d):
                 # 邊界檢查，防止超出圖片範圍
                 end_y = min(y + self.r, h)
                 end_x = min(x + self.r, w)

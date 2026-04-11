@@ -12,16 +12,24 @@ src = os.path.dirname(os.path.abspath(__file__))
 
 PROJECT_ROOT = os.path.dirname(src)
 
-TARGET_DIR = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step2/Brightness')
+TARGET_DIR = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step2/Grid_Mask')
 
 # 🚀 1. 引入寫好的 API
 import src.DA.brightness
-from src.DA.brightness import RandomBrightness
+from src.DA.grid_mask import GridMask
 
 
-def generate_samples(image_path,ratios,int_id=id):
+def generate_samples(image_path,ratios,int_id=id,is_grid_mask=False):
 
     original_filename = os.path.basename(image_path)
+    if is_grid_mask:
+        # 1. 將檔名與副檔名切開
+        # filename 會得到 "001"，ext 會得到 ".jpg"
+        filename, ext = os.path.splitext(os.path.basename(original_filename))
+
+        # 2. 強制組合成新的 PNG 檔名
+        original_filename = filename + ".png"
+
     id = f'{int_id:03d}'
     # 🚀 2. 載入並預處理圖片 (維持 4:1，縮放至 512x128)
     with Image.open(image_path).convert('RGB') as img:
@@ -32,7 +40,7 @@ def generate_samples(image_path,ratios,int_id=id):
         img_tensor = transform_base(img)
 
     for ratio in ratios:
-        api = RandomBrightness(brightness = float(ratio))
+        api = GridMask(ratio = float(ratio))
         percent_val = int(round(ratio * 100))
         dir_name = f"{percent_val}%"
 
@@ -92,7 +100,7 @@ def check_api(api_class,expected_shape,**kwargs):
 # ==========================================
 
 if __name__ == "__main__":
-    ratios = np.arange(0.0, 2.1, 0.1)
+    ratios = np.arange(0.0, 1.1, 0.1)
     source_dir = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step1')
 
     for id in tqdm(range(0, 1000), desc="正在處理圖片"):
