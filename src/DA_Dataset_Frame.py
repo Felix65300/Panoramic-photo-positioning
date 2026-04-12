@@ -12,22 +12,23 @@ src = os.path.dirname(os.path.abspath(__file__))
 
 PROJECT_ROOT = os.path.dirname(src)
 
-TARGET_DIR = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step2/')
+TARGET_DIR = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step2/Colortemperature')
 
 # 🚀 1. 引入寫好的 API
 from src.DA.grid_mask import GridMask
+from src.DA.color_temperature import RandomColorTemperature
+from src.DA.brightness import RandomBrightness
 
 
-def generate_samples(image_path,ratios,int_id=id,is_grid_mask=False):
+def generate_samples(image_path,ratios,int_id=id):
 
     original_filename = os.path.basename(image_path)
-    if is_grid_mask:
-        # 1. 將檔名與副檔名切開
-        # filename 會得到 "001"，ext 會得到 ".jpg"
-        filename, ext = os.path.splitext(os.path.basename(original_filename))
+    # 1. 將檔名與副檔名切開
+    # filename 會得到 "001"，ext 會得到 ".jpg"
+    filename, ext = os.path.splitext(os.path.basename(original_filename))
 
-        # 2. 強制組合成新的 PNG 檔名
-        original_filename = filename + ".png"
+    # 2. 強制組合成新的 PNG 檔名
+    original_filename = filename + ".png"
 
     id = f'{int_id:03d}'
     # 🚀 2. 載入並預處理圖片 (維持 4:1，縮放至 512x128)
@@ -39,7 +40,7 @@ def generate_samples(image_path,ratios,int_id=id,is_grid_mask=False):
         img_tensor = transform_base(img)
 
     for ratio in ratios:
-        api = GridMask(ratio = float(ratio))
+        api = RandomColorTemperature(ratio = float(ratio))
         percent_val = int(round(ratio * 100))
         dir_name = f"{percent_val}%"
 
