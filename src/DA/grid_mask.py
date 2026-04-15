@@ -26,8 +26,8 @@ class GridMask(nn.Module):
         mask = torch.ones((h,w), dtype=torch.float32, device=img.device)
 
         # 3. 生成隨機偏移量 (讓網格每次出現位置不同，避免模型記住位置)
-        delta_x = random.randint(0, self.d - 1)
-        delta_y = random.randint(0, self.d - 1)
+        #delta_x = random.randint(0, self.d - 1)
+        #delta_y = random.randint(0, self.d - 1)
 
         # 4. 挖洞邏輯 (將特定區域設為 0)
         # 使用切片 (Slicing) 取代迴圈，提升運算效率
