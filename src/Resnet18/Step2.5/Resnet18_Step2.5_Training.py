@@ -32,13 +32,13 @@ BATCH_SIZE = 128
 epochs = 200
 
 # 權重檔案名稱
-MODEL_PATH = os.path.join(current_dir, 'resnet18_pano_1000classes_optimized.pth')
+MODEL_PATH = 'Step2.5_resnet18_model.pth'
 
 
 def resnet18_training():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    img_path = os.path.join(Project_Root, "Dataset_Step1")
+    img_path = os.path.join(Project_Root, "Datasets/Dataset_Step1")
 
     # 1. 載入 Dataset
     dataset = get_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=True)
