@@ -2,7 +2,7 @@ import os
 import sys
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# data_Step1.py 跨資料夾，所以需要額外動作來輔助 import
+# data_Step2.py 跨資料夾，所以需要額外動作來輔助 import
 # 1. 取得目前檔案的 (Training.py) 所在目錄
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -36,8 +36,8 @@ Num_Epoch = 200
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 DEVICE = torch.device('cuda')
-TRAIN_DIR = os.path.join(Project_Root, "Dataset_Step1")
-MODEL_PATH = 'Step2_pano_cnn_model.pth'
+TRAIN_DIR = os.path.join(Project_Root, "Datasets/Dataset_Step1")
+MODEL_PATH = 'Step2.5_pano_cnn_model.pth'
 
 def model_training ():
     # ----------------------------------
