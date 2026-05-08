@@ -24,7 +24,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import  matplotlib.pyplot as plt
 from tqdm import tqdm
-from src.data_Step2_5 import get_dataset
+from src.data_Step2_5_Train import get_dataset
 from src.Custom_model.Convolution_Class import CNN
 
 # ---------------------------------
