@@ -24,13 +24,13 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import  matplotlib.pyplot as plt
 from tqdm import tqdm
-from src.data_Step2 import get_dataset
+from src.data_Step2_5 import get_dataset
 from src.Custom_model.Convolution_Class import CNN
 
 # ---------------------------------
 # 1. 設定參數與裝置
 # ---------------------------------
-BATCH_SIZE = 16 # 根據顯卡記憶體調整 (16 或 32)
+BATCH_SIZE = 128 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
 Num_Epoch = 200
 IMG_WIDTH = 512
