@@ -12,6 +12,9 @@ def get_dataset(root_dir, width, height, is_train=True):
     # 所以將 get_transform 刪掉直接 ToTensor 就好
     my_transform = transforms.Compose(transforms.ToTensor())
 
+
+
+
     # 2. 建立 ImageFolder
     # ImageFolder 會自動掃描 root_dir 下的所有子資料夾
     dataset = datasets.ImageFolder(root=root_dir, transform=my_transform)
