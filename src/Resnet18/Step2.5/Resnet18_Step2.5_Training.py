@@ -23,7 +23,7 @@ sys.path.append(src)
 sys.path.append(Project_Root)
 
 # Import 自定義模組
-from src.data_Step2_5 import get_dataset
+from src.data_Step2_5_Train import get_dataset
 from src.Resnet18.resnet18_revised_version import get_pano_model
 
 IMG_WIDTH = 512
