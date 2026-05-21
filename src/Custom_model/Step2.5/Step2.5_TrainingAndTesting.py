@@ -24,7 +24,8 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from src.data_Step2_5 import get_dataset
+from src.data_Step2_5_Test import get_test_dataset
+from src.data_Step2_5_Train import get_train_dataset
 from src.Custom_model.Convolution_Class import CNN
 
 # ---------------------------------
@@ -57,9 +58,13 @@ def model_test(model):
             else :
                 test_dir += '%'
             print(test_dir)
-            test_dataset = get_dataset(test_dir, IMG_WIDTH, IMG_HEIGHT, is_train=False)
+            test_dataset = get_test_dataset(test_dir)
 
-            test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
+            test_loader = DataLoader(test_dataset
+                                     , batch_size=BATCH_SIZE
+                                     , shuffle=True
+                                     , num_workers=4
+                                     , pin_memory=True)
 
             model.eval()
             correct = 0
@@ -80,8 +85,12 @@ def model_training ():
     # ----------------------------------
     # 2. 準備資料 (呼叫 data_Step1.py)
     # ----------------------------------
-    train_dataset = get_dataset(TRAIN_DIR,IMG_WIDTH,IMG_HEIGHT,is_train=True)
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    train_dataset = get_train_dataset(TRAIN_DIR,IMG_WIDTH,IMG_HEIGHT,is_train=True)
+    train_loader = DataLoader(train_dataset
+                              , batch_size=BATCH_SIZE
+                              , shuffle=True
+                              , num_workers=4
+                              , pin_memory=True)
 
     # ---------------------------------------------------
     # 3. 初始化模型
