@@ -15,7 +15,10 @@ PROJECT_ROOT = os.path.dirname(src)
 TARGET_DIR = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step2/')
 
 # 🚀 1. 引入寫好的 API
+from src.DA.brightness import RandomBrightness
+from src.DA.color_temperature import RandomColorTemperature
 from src.DA.grid_mask import GridMask
+from src.DA.horizontal_roll import RandomHorizontalRoll
 
 
 def generate_samples(image_path,ratios,int_id=id,is_grid_mask=False):
@@ -39,9 +42,10 @@ def generate_samples(image_path,ratios,int_id=id,is_grid_mask=False):
         img_tensor = transform_base(img)
 
     for ratio in ratios:
-        api = GridMask(ratio = float(ratio))
-        percent_val = int(round(ratio * 100))
-        dir_name = f"{percent_val}%"
+        api = RandomHorizontalRoll(steps=ratio,step_deg=10)
+        # percent_val = int(round(ratio * 100))
+        # dir_name = f"{percent_val}%"
+        dir_name = f'Horizontal_Roll/{ratio*10}°'
 
         save_path = Path(TARGET_DIR) / dir_name / id
 
@@ -53,8 +57,8 @@ def generate_samples(image_path,ratios,int_id=id,is_grid_mask=False):
         with torch.no_grad():
             # ⚠️ 注意維度：CNN 模型通常吃 (B, C, H, W)，如果 API 預設接收 Batch 維度，需加上 unsqueeze(0)
             # 如果 API 直接處理 (C, H, W)，則不需要 unsqueeze/squeeze
-            aug_tensor = api(img_tensor.unsqueeze(0)).squeeze(0)
-
+            # aug_tensor = api(img_tensor.unsqueeze(0)).squeeze(0)
+            aug_tensor = api(img_tensor)
             # 確保數值嚴格限制在 [0.0, 1.0] 區間
             aug_tensor = torch.clamp(aug_tensor, 0.0,1.0)
 
@@ -99,7 +103,7 @@ def check_api(api_class,expected_shape,**kwargs):
 # ==========================================
 
 if __name__ == "__main__":
-    ratios = np.arange(0.0, 2.1, 0.1)
+    ratios = np.arange(0, 37, 1)
     source_dir = os.path.join(PROJECT_ROOT, 'Datasets/Dataset_Step1')
 
     for id in tqdm(range(0, 1000), desc="正在處理圖片"):
