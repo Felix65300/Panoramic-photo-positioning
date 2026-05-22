@@ -29,12 +29,15 @@ epochs = 200
 
 MODEL_PATH = 'Step2.5_mobilenet_model.pth'
 
+GLOBAL_VAL_LOADERS = {}
+
 
 def get_val_dataloader(da_type, da_value):
     if da_type == 'Horizontal_Roll':
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}°")
     else:
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}%")
+
     dataset = get_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=False)
 
     val_loader = DataLoader(
@@ -47,13 +50,22 @@ def get_val_dataloader(da_type, da_value):
     return val_loader
 
 
-def run_inference(model, device, dataloader):
+def setup_val_dataloaders(da_conditions):
+    global GLOBAL_VAL_LOADERS
+    for da_type, val_list in da_conditions.items():
+        GLOBAL_VAL_LOADERS[da_type] = {}
+        print(f"Building DataLoaders for {da_type}...")
+        for da_val in val_list:
+            GLOBAL_VAL_LOADERS[da_type][da_val] = get_val_dataloader(da_type, da_val)
+
+
+def run_inference(model, device, dataloader, da_type, da_val):
     model.eval()
     correct = 0
     total = 0
 
     with torch.no_grad():
-        for img, id_label in dataloader:
+        for img, id_label in tqdm(dataloader, desc=f"Val: {da_type} {da_val}", leave=False, ncols=100):
             img, id_label = img.to(device), id_label.to(device)
             outputs = model(img)
             _, predicted = torch.max(outputs.data, 1)
@@ -120,6 +132,9 @@ def Mobilenet_training():
 
     da_history = {da: {val: [] for val in vals} for da, vals in da_conditions.items()}
 
+    print("Pre-building all Validation DataLoaders (Level 2)...")
+    setup_val_dataloaders(da_conditions)
+
     start_epoch = 0
     best_loss = float('inf')
     epoch_losses = []
@@ -168,8 +183,8 @@ def Mobilenet_training():
         print(f"Running Inference for 90 DA conditions...")
         for da_type, val_list in da_conditions.items():
             for da_val in val_list:
-                val_loader = get_val_dataloader(da_type, da_val)
-                accuracy = run_inference(model, device, val_loader)
+                val_loader = GLOBAL_VAL_LOADERS[da_type][da_val]
+                accuracy = run_inference(model, device, val_loader, da_type, da_val)
                 da_history[da_type][da_val].append(accuracy)
 
         plot_and_save_curves(epoch_losses, da_history, epoch)
