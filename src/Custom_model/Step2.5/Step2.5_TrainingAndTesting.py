@@ -61,7 +61,7 @@ def define_data_loaders():
                , batch_size=BATCH_SIZE
                , shuffle=True
                , num_workers=4
-               , pin_memory=True)
+               , pin_memory=False)
 
     da_conditions = {'Brightness': list(range(0, 210, 10)),
                      'Colortemperature': list(range(0, 210, 10)),
@@ -83,13 +83,13 @@ def define_data_loaders():
                                      , batch_size=BATCH_SIZE
                                      , shuffle=False
                                      , num_workers=4
-                                     , pin_memory=True)
+                                     , pin_memory=False)
     TEST_DATALOADER_DICT['Origin'] = {}
     TEST_DATALOADER_DICT['Origin']['Baseline'] = DataLoader(train_dataset
                                                      , batch_size=BATCH_SIZE
                                                      , shuffle=False
                                                      , num_workers=4
-                                                     , pin_memory=True)
+                                                     , pin_memory=False)
     DA_ACCURACY['Origin'] = {}
     DA_ACCURACY['Origin']['Baseline'] = list()
 
@@ -217,7 +217,9 @@ def generate_figure():
                 fig_name += f"_{val}%"
             fig_name += '_Accuracy.png'
             save_path = Path(FIG_DIR) / f"{category}" / f"{fig_name}"
+            save_path.parent.mkdir(parents=True, exist_ok=True)
             plt.savefig(save_path, bbox_inches='tight')
+            plt.close()
 
 def gernerate_xlsx():
     global DA_ACCURACY
@@ -269,7 +271,7 @@ def gernerate_xlsx():
     # 有訪每一個儲存格套用樣式
     for r in range(1, max_row + 1):
         for c in range(1, max_col + 1):
-            cell = ws.cell(row=r, column=c).value
+            cell = ws.cell(row=r, column=c)
             cell.border = border_all
 
             # Pandas 產生的雙層表頭會佔用前 3 列 (Row 1~3)
@@ -305,7 +307,7 @@ def gernerate_xlsx():
         col_letter = openpyxl.utils.get_column_letter(col_idx)
         ws.column_dimensions[col_letter].width = 14
 
-        wb.save(file_path)
+    wb.save(file_path)
 def main():
     define_data_loaders()
     model_training_and_test()
