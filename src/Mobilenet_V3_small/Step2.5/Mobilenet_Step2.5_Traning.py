@@ -6,6 +6,10 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import pandas as pd
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -100,6 +104,70 @@ def plot_and_save_curves(epoch_losses, da_history, current_epoch):
             plt.close()
 
 
+def save_to_excel(da_history, filename='DA_Accuracy_History.xlsx'):
+    formatted_data = {}
+    for da_type, values in da_history.items():
+        for val, acc_list in values.items():
+            formatted_data[(da_type, val)] = acc_list
+
+    df = pd.DataFrame(formatted_data)
+    df.index = range(1, len(df) + 1)
+    df.index.name = 'Epoch'
+    df.columns.names = ['DA Topic', 'Intensity']
+    df.to_excel(filename, engine='openpyxl')
+
+    try:
+        wb = openpyxl.load_workbook(filename)
+        ws = wb.active
+        ws.title = "Training Logs"
+
+        font_header = Font(name="Times New Roman", size=11, bold=True, color="FFFFFF")
+        font_index = Font(name="Times New Roman", size=11, bold=True)
+        font_regular = Font(name="Times New Roman", size=11)
+
+        fill_header = PatternFill(start_color="1F4E79", end_color="1F4E79", fill_type="solid")
+        fill_zebra = PatternFill(start_color="F2F6F9", end_color="F2F6F9", fill_type="solid")
+
+        align_center = Alignment(horizontal='center', vertical='center')
+        align_right = Alignment(horizontal='right', vertical='center')
+        thin_side = Side(border_style='thin', color='D3D3D3')
+        border_all = Border(left=thin_side, right=thin_side, top=thin_side, bottom=thin_side)
+
+        max_row = ws.max_row
+        max_col = ws.max_column
+
+        for r in range(1, max_row + 1):
+            for c in range(1, max_col + 1):
+                cell = ws.cell(row=r, column=c)
+                cell.border = border_all
+
+                if r <= 3:
+                    cell.font = font_header
+                    cell.fill = fill_header
+                    cell.alignment = align_center
+                else:
+                    cell.font = font_regular
+                    if c == 1:
+                        cell.font = font_index
+                        cell.alignment = align_center
+                    else:
+                        cell.alignment = align_right
+                        cell.number_format = "0.00"
+
+                    if r % 2 == 0:
+                        cell.fill = fill_zebra
+
+        ws.freeze_panes = "B4"
+        ws.column_dimensions['A'].width = 10
+        for col_idx in range(2, max_col + 1):
+            col_letter = get_column_letter(col_idx)
+            ws.column_dimensions[col_letter].width = 14
+
+        wb.save(filename)
+    except Exception:
+        pass
+
+
 def Mobilenet_training():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     img_path = os.path.join(Project_Root, "Datasets/Dataset_Step1")
@@ -188,6 +256,7 @@ def Mobilenet_training():
                 da_history[da_type][da_val].append(accuracy)
 
         plot_and_save_curves(epoch_losses, da_history, epoch)
+        save_to_excel(da_history)
 
         if avg_loss < best_loss:
             best_loss = avg_loss
