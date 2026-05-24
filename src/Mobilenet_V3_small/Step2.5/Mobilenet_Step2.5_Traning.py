@@ -22,7 +22,7 @@ sys.path.append(Mobilenet_V3_small)
 sys.path.append(src)
 sys.path.append(Project_Root)
 
-from src.data_Step2_5 import get_dataset
+from src.data_Step2_5_Train import get_train_dataset
 from src.Mobilenet_V3_small.Mobilenet_V3_small_modified_version import build_model
 
 Learning_Rate = 1e-4
@@ -32,17 +32,20 @@ BATCH_SIZE = 128
 epochs = 200
 
 MODEL_PATH = 'Step2.5_mobilenet_model.pth'
+FIG_DIR = os.path.join(Project_Root, 'Figures', 'Step2.5', 'MobileNet-V3_Small')
 
 GLOBAL_VAL_LOADERS = {}
 
 
 def get_val_dataloader(da_type, da_value):
-    if da_type == 'Horizontal_Roll':
+    if da_type == 'Origin':
+        img_path = os.path.join(Project_Root, "Datasets/Dataset_Step1")
+    elif da_type == 'Horizontal_Roll':
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}°")
     else:
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}%")
 
-    dataset = get_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=False)
+    dataset = get_train_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=False)
 
     val_loader = DataLoader(
         dataset=dataset,
@@ -81,26 +84,30 @@ def run_inference(model, device, dataloader, da_type, da_val):
     return (correct / total) * 100.0
 
 
-def plot_and_save_curves(epoch_losses, da_history, current_epoch):
-    plt.figure(figsize=(10, 5))
-    plt.plot(range(1, current_epoch + 2), epoch_losses, label='Training Loss')
-    plt.grid(True)
-    plt.savefig('Mobilenet_loss_curve.png')
-    plt.close()
-
-    os.makedirs('DA_Plots', exist_ok=True)
-
+def plot_and_save_curves(da_history, current_epoch):
     for da_type, values_dict in da_history.items():
+        sub_dir = os.path.join(FIG_DIR, da_type)
+        os.makedirs(sub_dir, exist_ok=True)
+
         for val, acc_list in values_dict.items():
+            if da_type == 'Horizontal_Roll':
+                unit = '°'
+            elif da_type == 'Origin':
+                unit = ''
+            else:
+                unit = '%'
+
             plt.figure(figsize=(10, 5))
-            plt.plot(range(1, current_epoch + 2), acc_list, label=f'{da_type} {val}%')
+            plt.plot(range(1, current_epoch + 2), acc_list, label=f'{da_type} {val}{unit}')
             plt.xlabel('Epoch')
             plt.ylabel('Accuracy (%)')
-            plt.title(f'Accuracy Validation: {da_type} {val}%')
+            plt.title(f'Accuracy Validation: {da_type} {val}{unit}')
             plt.xlim(1, epochs)
             plt.ylim(0, 105)
             plt.grid(True)
-            plt.savefig(os.path.join('DA_Plots', f'{da_type}_{val}.png'))
+
+            filename = f"{da_type}_{val}{unit}.png"
+            plt.savefig(os.path.join(sub_dir, filename))
             plt.close()
 
 
@@ -172,7 +179,7 @@ def Mobilenet_training():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     img_path = os.path.join(Project_Root, "Datasets/Dataset_Step1")
 
-    dataset = get_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=True)
+    dataset = get_train_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=True)
 
     trainloader = DataLoader(
         dataset=dataset,
@@ -192,6 +199,7 @@ def Mobilenet_training():
     )
 
     da_conditions = {
+        'Origin': ['Baseline'],
         'Brightness': list(range(0, 210, 10)),
         'ColorTemperature': list(range(0, 210, 10)),
         'Grid_Mask': list(range(0, 110, 10)),
@@ -255,7 +263,7 @@ def Mobilenet_training():
                 accuracy = run_inference(model, device, val_loader, da_type, da_val)
                 da_history[da_type][da_val].append(accuracy)
 
-        plot_and_save_curves(epoch_losses, da_history, epoch)
+        plot_and_save_curves(da_history, epoch)
         save_to_excel(da_history)
 
         if avg_loss < best_loss:
