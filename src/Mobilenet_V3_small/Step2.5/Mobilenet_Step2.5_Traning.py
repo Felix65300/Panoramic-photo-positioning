@@ -32,7 +32,7 @@ BATCH_SIZE = 128
 epochs = 200
 
 MODEL_PATH = 'Step2.5_mobilenet_model.pth'
-FIG_DIR = os.path.join(Project_Root, 'Figures', 'Step2.5', 'MobileNet-V3_Small')
+FIG_DIR = os.path.join(Project_Root, 'Figures', 'Step2.5', 'MobileNet-V3-Small')
 
 GLOBAL_VAL_LOADERS = {}
 
