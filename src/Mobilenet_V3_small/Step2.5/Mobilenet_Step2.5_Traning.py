@@ -85,6 +85,23 @@ def run_inference(model, device, dataloader, da_type, da_val):
 
 
 def plot_and_save_curves(da_history, current_epoch):
+    plt.rcParams.update({
+        'font.family': 'serif',
+        'font.serif': ['Times New Roman'],
+        'font.size': 10,
+        'axes.labelsize': 10,
+        'axes.titlesize': 10,
+        'xtick.labelsize': 8,
+        'ytick.labelsize': 8,
+        'legend.fontsize': 8,
+        'legend.frameon': False,
+        'lines.linewidth': 1.2,
+        'axes.linewidth': 0.8,
+        'grid.linestyle': '--',
+        'grid.alpha': 0.5,
+        'figure.dpi': 300
+    })
+
     for da_type, values_dict in da_history.items():
         sub_dir = os.path.join(FIG_DIR, da_type)
         os.makedirs(sub_dir, exist_ok=True)
@@ -97,18 +114,21 @@ def plot_and_save_curves(da_history, current_epoch):
             else:
                 unit = '%'
 
-            plt.figure(figsize=(10, 5))
-            plt.plot(range(1, current_epoch + 2), acc_list, label=f'{da_type} {val}{unit}')
-            plt.xlabel('Epoch')
-            plt.ylabel('Accuracy (%)')
-            plt.title(f'Accuracy Validation: {da_type} {val}{unit}')
-            plt.xlim(1, epochs)
-            plt.ylim(0, 105)
-            plt.grid(True)
+            fig, ax = plt.subplots(figsize=(3.5, 2.5))
+            ax.plot(range(1, current_epoch + 2), acc_list, label=f'{da_type} {val}{unit}', color='#d62728')
+            ax.set_xlabel('Epoch')
+            ax.set_ylabel('Accuracy (%)')
+            ax.set_title(f'Accuracy Validation: {da_type} {val}{unit}')
+            ax.set_xlim(1, epochs)
+            ax.set_ylim(0, 105)
+            ax.grid(True)
+
+            if len(acc_list) > 0:
+                ax.legend()
 
             filename = f"{da_type}_{val}{unit}.png"
-            plt.savefig(os.path.join(sub_dir, filename))
-            plt.close()
+            fig.savefig(os.path.join(sub_dir, filename), bbox_inches='tight')
+            plt.close(fig)
 
 
 def save_to_excel(da_history, filename='DA_Accuracy_History.xlsx'):
