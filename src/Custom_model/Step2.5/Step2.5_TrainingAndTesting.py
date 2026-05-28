@@ -59,9 +59,7 @@ def define_data_loaders():
     train_dataset = get_train_dataset(TRAIN_DIR, IMG_WIDTH, IMG_HEIGHT, is_train=True)
     TRAIN_DATALOADER = DataLoader(train_dataset
                , batch_size=BATCH_SIZE
-               , shuffle=True
-               , num_workers=4
-               , pin_memory=False)
+               , shuffle=True)
 
     da_conditions = {'Brightness': list(range(0, 210, 10)),
                      'Colortemperature': list(range(0, 210, 10)),
@@ -81,15 +79,11 @@ def define_data_loaders():
 
             TEST_DATALOADER_DICT[category][val] = DataLoader(test_dataset
                                      , batch_size=BATCH_SIZE
-                                     , shuffle=False
-                                     , num_workers=4
-                                     , pin_memory=False)
+                                     , shuffle=False)
     TEST_DATALOADER_DICT['Origin'] = {}
     TEST_DATALOADER_DICT['Origin']['Baseline'] = DataLoader(train_dataset
                                                      , batch_size=BATCH_SIZE
-                                                     , shuffle=False
-                                                     , num_workers=4
-                                                     , pin_memory=False)
+                                                     , shuffle=False)
     DA_ACCURACY['Origin'] = {}
     DA_ACCURACY['Origin']['Baseline'] = list()
 
