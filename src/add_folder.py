@@ -11,12 +11,11 @@ parent_dir = os.path.dirname(current_dir)
 # 3. 將根目錄加入系統搜尋路徑
 sys.path.append(parent_dir)
 
-TARGET_DIRECTORY = Path(parent_dir) / 'Figures'
+TARGET_DIRECTORY = Path(parent_dir) / 'Figures' / 'Step2.5'
 
-# paths = (TARGET_DIRECTORY / 'Custom_model', TARGET_DIRECTORY / 'Resnet18'
-#          , TARGET_DIRECTORY / 'MobileNet-V3-Small'
-#          , TARGET_DIRECTORY / 'EfficientNet-B0')
-
+paths = (TARGET_DIRECTORY / 'Custom_model', TARGET_DIRECTORY / 'Resnet18'
+         , TARGET_DIRECTORY / 'MobileNet-V3-Small'
+         , TARGET_DIRECTORY / 'EfficientNet-B0')
 
 for path in paths:
     # 1. 設定目標資料夾路徑（請替換為你的資料集資料夾路徑）
@@ -28,7 +27,7 @@ for path in paths:
 
     # 3. 確保目標資料夾存在
     if not target_folder.exists():
-        print(f"找不到目標資料夾：{target_folder}")
+        target_folder.mkdir(parents=True)
     else:
         count = 0
         # 4. rglob("*") 會遞迴尋找所有層級的子資料夾
