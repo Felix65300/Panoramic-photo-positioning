@@ -24,13 +24,12 @@ from src.DA.horizontal_roll import RandomHorizontalRoll
 def generate_samples(image_path,ratios,int_id=id,is_grid_mask=False):
 
     original_filename = os.path.basename(image_path)
-    if is_grid_mask:
-        # 1. 將檔名與副檔名切開
-        # filename 會得到 "001"，ext 會得到 ".jpg"
-        filename, ext = os.path.splitext(os.path.basename(original_filename))
+    # 1. 將檔名與副檔名切開
+    # filename 會得到 "001"，ext 會得到 ".jpg"
+    filename, ext = os.path.splitext(os.path.basename(original_filename))
 
-        # 2. 強制組合成新的 PNG 檔名
-        original_filename = filename + ".png"
+    # 2. 強制組合成新的 PNG 檔名
+    original_filename = filename + ".png"
 
     id = f'{int_id:03d}'
     # 🚀 2. 載入並預處理圖片 (維持 4:1，縮放至 512x128)
