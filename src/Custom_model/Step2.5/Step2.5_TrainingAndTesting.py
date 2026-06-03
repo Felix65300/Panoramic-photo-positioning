@@ -38,7 +38,7 @@ from src.Custom_model.Convolution_Class import CNN
 # ---------------------------------
 # 1. 設定參數與裝置
 # ---------------------------------
-BATCH_SIZE = 128 # 根據顯卡記憶體調整 (16 或 32)
+BATCH_SIZE = 32 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
 Num_Epoch = 200
 IMG_WIDTH = 512
@@ -104,7 +104,7 @@ def model_test(model):
 
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
-                    DA_ACCURACY[category][val].append(100 * correct / total)
+            DA_ACCURACY[category][val].append(100 * correct / total)
 
 def model_training_and_test ():
     global TRAIN_DATALOADER, DEVICE, MODEL_PATH, Num_Epoch
@@ -167,7 +167,7 @@ def model_training_and_test ():
 
 def generate_figure():
     global DA_ACCURACY,FIG_DIR
-    epochs = np.arange(1, 201)
+    epochs = np.arange(1, Num_Epoch+1)
     # 全局設置
     plt.rcParams.update({
         'font.family': 'serif',  # 使用襯線字體
