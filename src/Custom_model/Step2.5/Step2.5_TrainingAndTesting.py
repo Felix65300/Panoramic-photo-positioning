@@ -82,13 +82,13 @@ def define_data_loaders():
             TEST_DATALOADER_DICT[category][val] = DataLoader(test_dataset
                                      , batch_size=BATCH_SIZE
                                      , shuffle=False
-                                     , num_workers=4
+                                     , num_workers=0
                                      , pin_memory=False)
     TEST_DATALOADER_DICT['Origin'] = {}
     TEST_DATALOADER_DICT['Origin']['Baseline'] = DataLoader(train_dataset
                                                      , batch_size=BATCH_SIZE
                                                      , shuffle=False
-                                                     , num_workers=4
+                                                     , num_workers=0
                                                      , pin_memory=False)
     DA_ACCURACY['Origin'] = {}
     DA_ACCURACY['Origin']['Baseline'] = list()

@@ -15,7 +15,7 @@ TARGET_DIRECTORY = Path(parent_dir) / 'Figures'
 
 paths = (TARGET_DIRECTORY / 'Custom_model', TARGET_DIRECTORY / 'Resnet18'
          , TARGET_DIRECTORY / 'MobileNet-V3-Small'
-         , TARGET_DIRECTORY / 'EfficientNet-B0')
+         , TARGET_DIRECTORY / 'EfficientNet_B0')
 
 for path in paths:
     # 1. 設定目標資料夾路徑（請替換為你的資料集資料夾路徑）
