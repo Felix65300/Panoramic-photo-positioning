@@ -28,7 +28,7 @@ from src.Mobilenet_V3_small.Mobilenet_V3_small_modified_version import build_mod
 Learning_Rate = 1e-4
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
-BATCH_SIZE = 128
+BATCH_SIZE = 32
 epochs = 200
 
 MODEL_PATH = 'Step2.5_mobilenet_model.pth'
@@ -51,8 +51,6 @@ def get_val_dataloader(da_type, da_value):
         dataset=dataset,
         batch_size=BATCH_SIZE,
         shuffle=False,
-        num_workers=0,
-        pin_memory=True
     )
     return val_loader
 
@@ -205,9 +203,6 @@ def Mobilenet_training():
         dataset=dataset,
         batch_size=BATCH_SIZE,
         shuffle=True,
-        num_workers=8,
-        pin_memory=True,
-        persistent_workers=True
     )
 
     model = build_model(num_classes=1000)
