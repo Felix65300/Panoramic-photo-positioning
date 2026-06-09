@@ -34,22 +34,22 @@ from tqdm import tqdm
 from src.data_Step2_5_Test import get_test_dataset
 from src.data_Step2_5_Train import get_train_dataset
 from src.Resnet18.resnet18_revised_version import get_pano_model
-# from src.Custom_model.Convolution_Class import CNN  # ← 這行可刪除
+
 
 # ---------------------------------
 # 1. 設定參數與裝置
 # ---------------------------------
-BATCH_SIZE = 128 # 根據顯卡記憶體調整 (16 或 32)
+BATCH_SIZE = 32 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
 Num_Epoch = 200
-IMG_WIDTH = 224      # ← 改成 224
-IMG_HEIGHT = 224     # ← 改成 224
+IMG_WIDTH = 512      # ← 改成 224
+IMG_HEIGHT = 128     # ← 改成 224
 DEVICE = torch.device('cuda')
 TRAIN_DIR = Project_Root + '/Datasets/Dataset_Step1'
 TEST_ROOT = Project_Root + '/Datasets/Dataset_Step2'
-FIG_DIR = Project_Root + '/Figures/Step2.5/Custom_model'
-XLSX_DIR = Project_Root + '/Figures/Step2.5/Custom_model'
-MODEL_PATH = 'Step2.5_pano_cnn_model.pth'
+FIG_DIR = Project_Root + '/Figures/Step2.5/Resnet18'
+XLSX_DIR = Project_Root + '/Figures/Step2.5/Resnet18'
+MODEL_PATH = 'Step2.5_resnet18_model.pth'
 DA_ACCURACY = {}
 
 TEST_DATALOADER_DICT = {}
@@ -60,9 +60,7 @@ def define_data_loaders():
     train_dataset = get_train_dataset(TRAIN_DIR, IMG_WIDTH, IMG_HEIGHT, is_train=True)
     TRAIN_DATALOADER = DataLoader(train_dataset
                , batch_size=BATCH_SIZE
-               , shuffle=True
-               , num_workers=4
-               , pin_memory=False)
+               , shuffle=True)
 
     da_conditions = {'Brightness': list(range(0, 210, 10)),
                      'Colortemperature': list(range(0, 210, 10)),
@@ -82,15 +80,11 @@ def define_data_loaders():
 
             TEST_DATALOADER_DICT[category][val] = DataLoader(test_dataset
                                          , batch_size=BATCH_SIZE
-                                         , shuffle=False
-                                         , num_workers=4
-                                         , pin_memory=False)
+                                         , shuffle=False)
     TEST_DATALOADER_DICT['Origin'] = {}
     TEST_DATALOADER_DICT['Origin']['Baseline'] = DataLoader(train_dataset
                                                      , batch_size=BATCH_SIZE
-                                                     , shuffle=False
-                                                     , num_workers=4
-                                                     , pin_memory=False)
+                                                     , shuffle=False)
     DA_ACCURACY['Origin'] = {}
     DA_ACCURACY['Origin']['Baseline'] = list()
 
@@ -110,7 +104,7 @@ def model_test(model):
 
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
-                    DA_ACCURACY[category][val].append(100 * correct / total)
+             DA_ACCURACY[category][val].append(100 * correct / total)
 
 def model_training_and_test ():
     global TRAIN_DATALOADER, DEVICE, MODEL_PATH, Num_Epoch
