@@ -15,7 +15,8 @@ class RandomHorizontalRoll:
         # 把 PIL 轉成 Numpy
         w = img_tensor.shape[-1]
 
-        shift = (w // self.total_steps) * self.steps
+        # 先做浮點數除法，乘上寬度 512 後，再四捨五入轉成整數
+        shift = int(round((self.steps / self.total_steps) * w))
         # axis=1 代表左右移動
         shift_tensor = torch.roll(img_tensor, shift, dims=-1)
 
