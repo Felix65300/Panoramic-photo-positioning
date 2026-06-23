@@ -1,21 +1,24 @@
-import numpy as np
-from PIL import Image
+import torch
 
 class RandomHorizontalRoll:
     """
     環景圖專用增強：隨機左右平移 (Horizontal Scroll)
     由於環頸圖頭尾相連，平移不影響地理語意
     """
-    def __call__(self, img):
-        # 1. 把 PIL 轉成 Numpy
-        img_np = np.array(img)
 
-        # 2. 隨機位移
-        h, w, c = img_np.shape
-        shift = np.random.randint(0,w)
+    def __init__(self, steps, step_deg=10):
+        self.step_deg = step_deg
+        self.steps = steps
+        self.total_steps = 360 // step_deg
 
+    def __call__(self, img_tensor):
+        # 把 PIL 轉成 Numpy
+        w = img_tensor.shape[-1]
+
+        # 先做浮點數除法，乘上寬度 512 後，再四捨五入轉成整數
+        shift = int(round((self.steps / self.total_steps) * w))
         # axis=1 代表左右移動
-        img_np = np.roll(img_np, shift, axis=1)
+        shift_tensor = torch.roll(img_tensor, shift, dims=-1)
 
         # 3. 轉回 PIL
-        return Image.fromarray(img_np)
+        return shift_tensor
