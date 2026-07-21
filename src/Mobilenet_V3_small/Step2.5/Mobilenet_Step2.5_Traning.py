@@ -23,6 +23,7 @@ sys.path.append(src)
 sys.path.append(Project_Root)
 
 from src.data_Step2_5_Train import get_train_dataset
+from src.data_Step2_5_Test import get_test_dataset
 from src.Mobilenet_V3_small.Mobilenet_V3_small_modified_version import build_model
 
 Learning_Rate = 1e-4
@@ -40,12 +41,13 @@ GLOBAL_VAL_LOADERS = {}
 def get_val_dataloader(da_type, da_value):
     if da_type == 'Origin':
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step1")
+        dataset = get_train_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=False)
     elif da_type == 'Horizontal_Roll':
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}°")
+        dataset = get_test_dataset(root_dir=img_path)
     else:
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}%")
-
-    dataset = get_train_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=False)
+        dataset = get_test_dataset(root_dir=img_path)
 
     val_loader = DataLoader(
         dataset=dataset,
@@ -258,7 +260,6 @@ def Mobilenet_training():
                 loss = criterion(outputs, id_label)
                 loss.backward()
 
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=2.0)
                 optimizer.step()
 
                 running_loss += loss.item()
