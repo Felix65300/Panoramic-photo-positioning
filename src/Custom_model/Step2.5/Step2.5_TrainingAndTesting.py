@@ -187,13 +187,22 @@ def generate_figure():
     })
     color = '#d62728' # 紅
     for category, values in DA_ACCURACY.items():
+        if category == 'Horizontal_Roll':
+            unit = '°'
+        elif category == 'Origin':
+            unit = ''
+        else:
+            unit = '%'
         for val,accuracy in values.items():
             fig, ax = plt.subplots(figsize=(3.5, 2.5))
             ax.plot(epochs, accuracy, label="Model", color=color, linestyle='-')
             ax.set_xlabel("Epochs")
             ax.set_ylabel("Accuracy (%)")
+            ax.set_title(f'Accuracy Validation: {category} {val}{unit}')
             ax.legend(loc='lower right')
             ax.set_ylim(0, 100)
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
 
             # ===========================
             # 6. 最後調整與存檔
