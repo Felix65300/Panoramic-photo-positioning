@@ -31,7 +31,7 @@ from src.data_Step2_5_Train import get_train_dataset
 from src.data_Step2_5_Test import get_test_dataset
 from EfficientNet_B0_modified_version import build_model
 
-# ----------------- 超參數設定 -----------------
+
 Learning_Rate = 1e-4
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
