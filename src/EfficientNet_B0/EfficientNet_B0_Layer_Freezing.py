@@ -27,6 +27,8 @@ def build_model(num_classes):
             for param in child.parameters():
                 param.requires_grad = False
 
+    return model
+
 def __main__():
     model = build_model(1000)
     print(model)

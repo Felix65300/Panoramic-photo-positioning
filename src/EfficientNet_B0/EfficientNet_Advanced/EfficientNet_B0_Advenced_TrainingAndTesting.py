@@ -34,14 +34,14 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from src.data_Step2_5_Test import get_test_dataset
 from src.data_Step2_5_Train import get_train_dataset
-from src.EfficientNet_B0.EfficientNet_B0_GeM import build_model
+from src.EfficientNet_B0.EfficientNet_B0_Layer_Freezing import build_model
 
 # ---------------------------------
 # 1. 設定參數與裝置
 # ---------------------------------
 BATCH_SIZE = 32 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
-Num_Epoch = 200
+Num_Epoch = 3
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 DEVICE = torch.device('cuda')
@@ -49,7 +49,7 @@ TRAIN_DIR = Project_Root + '/Datasets/Dataset_Step1'
 TEST_ROOT = Project_Root + '/Datasets/Dataset_Step2'
 FIG_DIR = Project_Root + '/Figures/'
 XLSX_DIR = Project_Root + '/Figures/'
-MODEL_PATH = 'EfficientNet_B0_GeM_model.pth'
+MODEL_PATH = 'EfficientNet_B0_Layer_Freezing_model.pth'
 DA_ACCURACY = {}
 
 TEST_DATALOADER_DICT = {}
@@ -214,7 +214,7 @@ def generate_meeting_figure():
     # dpi=300 是印刷品質的標準
     # bbox_inches='tight' 確保儲存時去除多餘白邊
     plt.tight_layout()
-    fig_name = f"EfficientNet_GeM_Accuracy.png"
+    fig_name = f"EfficientNet_Layer_Freezing_Accuracy.png"
     save_path = Path(FIG_DIR) / "EfficientNet_Advanced" / f"{fig_name}"
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, bbox_inches='tight')
@@ -262,13 +262,8 @@ def generate_paper_figure():
             # bbox_inches='tight' 確保儲存時去除多餘白邊
             plt.tight_layout()
 
-            fig_name = f"{category}"
-            if category == 'Horizontal_Roll':
-                fig_name += f"_{val}°"
-            elif category != 'Origin':
-                fig_name += f"_{val}%"
-            fig_name += '_Accuracy.png'
-            save_path = Path(FIG_DIR) / "EfficientNet_Advanced"/ "GeM" / f"{category}" / f"{fig_name}"
+            fig_name = f"{category}_{val}%_Accuracy.png"
+            save_path = Path(FIG_DIR) / "EfficientNet_Advanced"/ "Layer Freezing" / f"{category}" / f"{fig_name}"
             save_path.parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(save_path, bbox_inches='tight')
             plt.close()
@@ -288,7 +283,7 @@ def gernerate_xlsx():
     df.index = range(1, len(df) + 1)
     df.index.name = 'Epoch'
     df.columns.names = ['DA Topic', 'Intensity']
-    file_path = Path(XLSX_DIR) / "EfficientNet_Advanced"/ "GeM" / "DA_Accuracy_Final.xlsx"
+    file_path = Path(XLSX_DIR) / "EfficientNet_Advanced"/ "Layer Freezing" / "DA_Accuracy_Final.xlsx"
     df.to_excel(file_path, engine='openpyxl')
 
     # ==========================================
