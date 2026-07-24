@@ -288,7 +288,7 @@ def gernerate_xlsx():
     df.index = range(1, len(df) + 1)
     df.index.name = 'Epoch'
     df.columns.names = ['DA Topic', 'Intensity']
-    file_path = Path(XLSX_DIR) / "EfficientNet_Advanced"/ "GeM" / "DA_Accuracy_Final.xlsx"
+    file_path = Path(XLSX_DIR) / "EfficientNet_Advanced"/ "DropConnect" / "DA_Accuracy_Final.xlsx"
     df.to_excel(file_path, engine='openpyxl')
 
     # ==========================================
