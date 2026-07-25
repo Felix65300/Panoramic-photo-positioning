@@ -14,32 +14,31 @@ from openpyxl.utils import get_column_letter
 # 允許 KMP 重複初始化（防止部分環境下 OpenMP 報錯）
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-# -----------------修正後的精準路徑設定 -----------------
-current_dir = os.path.dirname(os.path.abspath(__file__))  # 這是 Step2.5 資料夾
-EfficientNet_B0_dir = os.path.dirname(current_dir)         # 這是 EfficientNet-B0 資料夾
-src = os.path.dirname(EfficientNet_B0_dir)                 # 這是 src 資料夾
-Project_Root = os.path.dirname(src)                       # 這是專案根目錄
+# ----------------- 精準路徑設定（完全對齊專案目錄結構） -----------------
+current_dir = os.path.dirname(os.path.abspath(__file__))      # 當前資料夾 (例如 Step2.5)
+EfficientNet_B0_dir = os.path.dirname(current_dir)             # 上一層模型資料夾
+src = os.path.dirname(EfficientNet_B0_dir)                     # 專案的 src 原始碼目錄
+Project_Root = os.path.dirname(src)                           # 專案根目錄
 
-# 將同級目錄與上級目錄都加入環境變數
-sys.path.append(current_dir)                               # 確保同目錄檔案能被直接匯入
+# 將環境變數路徑依序加入，防範模組匯入找不到路徑
+sys.path.append(current_dir)
 sys.path.append(EfficientNet_B0_dir)
 sys.path.append(src)
 sys.path.append(Project_Root)
 
 # 匯入資料集讀取函式
 from src.data_Step2_5_Train import get_train_dataset
-
-# 移除點！直接匯入（因為同目錄已被加入 sys.path，執行絕對不會錯）
+from src.data_Step2_5_Test import get_test_dataset
 from EfficientNet_B0_modified_version import build_model
 
-# ----------------- 超參數設定 -----------------
+
 Learning_Rate = 1e-4
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 BATCH_SIZE = 32
 epochs = 200
 
-# 權重與圖表儲存路徑變更 (對應你的系統結構)
+# 權重與圖表儲存路徑變更 (對應 EfficientNet-B0 專屬資料夾)
 MODEL_PATH = 'Step2.5_efficientnet_b0_model.pth'
 FIG_DIR = os.path.join(Project_Root, 'Figures', 'Step2.5', 'EfficientNet-B0')
 
@@ -47,14 +46,16 @@ GLOBAL_VAL_LOADERS = {}
 
 
 def get_val_dataloader(da_type, da_value):
+    # 完全對齊 MobileNet 的驗證集路徑分支與 Dataset 讀取邏輯
     if da_type == 'Origin':
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step1")
+        dataset = get_train_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=False)
     elif da_type == 'Horizontal_Roll':
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}°")
+        dataset = get_test_dataset(root_dir=img_path)
     else:
         img_path = os.path.join(Project_Root, "Datasets/Dataset_Step2", da_type, f"{da_value}%")
-
-    dataset = get_train_dataset(root_dir=img_path, width=IMG_WIDTH, height=IMG_HEIGHT, is_train=False)
+        dataset = get_test_dataset(root_dir=img_path)
 
     val_loader = DataLoader(
         dataset=dataset,
@@ -213,7 +214,7 @@ def Efficientnet_training():
         shuffle=True,
     )
 
-    # 建立 EfficientNet_B0 模型
+    # 建立改版後的 EfficientNet_B0 模型
     model = build_model(num_classes=1000)
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
@@ -222,6 +223,7 @@ def Efficientnet_training():
         optimizer, mode='min', factor=0.5, patience=10, min_lr=1e-6
     )
 
+    # 定義 90 種數據增強驗證條件
     da_conditions = {
         'Origin': ['Baseline'],
         'Brightness': list(range(0, 210, 10)),
@@ -239,6 +241,7 @@ def Efficientnet_training():
     best_loss = float('inf')
     epoch_losses = []
 
+    # 權重續訓機制
     if os.path.exists(MODEL_PATH):
         try:
             print(f"Loading weights from {MODEL_PATH}")
@@ -267,6 +270,7 @@ def Efficientnet_training():
                 loss = criterion(outputs, id_label)
                 loss.backward()
 
+                # 梯度裁剪防止卷積神經網路梯度爆炸
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=2.0)
                 optimizer.step()
 
@@ -280,6 +284,7 @@ def Efficientnet_training():
 
         print(f"Epoch {epoch + 1} | Loss: {avg_loss:.4f} | LR: {current_lr:.8f}")
 
+        # 執行 90 種條件的推理與精確度記錄
         print(f"Running Inference for 90 DA conditions...")
         for da_type, val_list in da_conditions.items():
             for da_val in val_list:
@@ -287,9 +292,11 @@ def Efficientnet_training():
                 accuracy = run_inference(model, device, val_loader, da_type, da_val)
                 da_history[da_type][da_val].append(accuracy)
 
+        # 繪圖並導出至 Excel 報表
         plot_and_save_curves(da_history, epoch)
         save_to_excel(da_history)
 
+        # 儲存最優模型
         if avg_loss < best_loss:
             best_loss = avg_loss
             checkpoint = {
