@@ -38,7 +38,7 @@ Learning_Rate = 1e-4
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 BATCH_SIZE = 32
-epochs = 3
+epochs = 200
 
 
 
