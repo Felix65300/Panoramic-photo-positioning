@@ -5,8 +5,9 @@ from torchvision import models, transforms
 
 
 def build_model(num_classes):
-    # 修改這裡：將 weights 改為 None，不加載任何預訓練權重
-    model = models.efficientnet_b0(weights=None)
+    # 載入預訓練權重
+    weights = models.EfficientNet_B0_Weights.DEFAULT
+    model = models.efficientnet_b0(weights=weights)
 
     # EfficientNet_B0 的 classifier 結構為:
     # (0): Dropout(p=0.2, inplace=True)
@@ -16,6 +17,8 @@ def build_model(num_classes):
     in_features = model.classifier[1].in_features
 
     # 替換最後一層為新的分類層
-    model.classifier[1] = nn.Linear(in_features, num_classes)
-
+    model.classifier = nn.Sequential(
+        nn.Dropout(p=0.2, inplace=True),
+        nn.Linear(in_features, num_classes)
+    )
     return model
