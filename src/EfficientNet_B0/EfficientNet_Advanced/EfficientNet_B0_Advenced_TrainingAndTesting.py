@@ -41,7 +41,7 @@ from src.EfficientNet_B0.EfficientNet_B0_Layer_Freezing import build_model
 # ---------------------------------
 BATCH_SIZE = 32 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
-Num_Epoch = 3
+Num_Epoch = 200
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 DEVICE = torch.device('cuda')
