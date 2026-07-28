@@ -128,13 +128,11 @@ def paper_plot_and_save_curves(da_history, current_epoch):
                 unit = '%'
 
             fig, ax = plt.subplots(figsize=(3.5, 2.5))
-            ax.plot(range(1, len(acc_list) + 1), acc_list, label=f'{da_type} {val}{unit}', color='#d62728')
+            ax.plot(epochs, acc_list, label=f'Model', color='#d62728')
             ax.set_xlabel('Epoch')
             ax.set_ylabel('Accuracy (%)')
             ax.set_title(f'Accuracy Validation: {da_type} {val}{unit}')
-            ax.set_xlim(1, epochs)
             ax.set_ylim(0, 100)
-            ax.grid(True)
 
             if len(acc_list) > 0:
                 ax.legend(loc='lower right')
@@ -177,14 +175,11 @@ def meeting_plot_and_save_curves(da_history, current_epoch):
             for val, acc_list in values_dict.items():
                 if len(acc_list) > 0:
                     line_color = cmap(norm(val))
-                    ax.plot(range(1, len(acc_list) + 1), acc_list, label='Model', color=line_color, linestyle='-')
-            ax.legend(loc='lower right')
+                    ax.plot(epochs, acc_list, color=line_color, linestyle='-')
             ax.set_xlabel('Epoch')
             ax.set_ylabel('Accuracy (%)')
             ax.set_title(f'Accuracy Validation')
-            ax.set_xlim(1, epochs)
             ax.set_ylim(0, 100)
-            ax.grid(True)
 
             sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
             sm.set_array([])
@@ -194,7 +189,7 @@ def meeting_plot_and_save_curves(da_history, current_epoch):
             cbar.set_ticklabels(np.arange(0, 210, 50))
 
             filename = f"EfficientNet_B0_Baseline_Accuracy.png"
-            sub_dir = FIG_DIR / "EfficientNet_Advanced" / "Baseline" / da_type / filename
+            sub_dir = FIG_DIR / "EfficientNet_Advanced" / "Baseline" / filename
             sub_dir.parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(sub_dir, bbox_inches='tight')
             plt.close(fig)
