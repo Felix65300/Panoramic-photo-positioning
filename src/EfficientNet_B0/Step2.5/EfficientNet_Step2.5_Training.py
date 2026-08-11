@@ -38,7 +38,7 @@ Learning_Rate = 1e-4
 IMG_WIDTH = 512
 IMG_HEIGHT = 128
 BATCH_SIZE = 32
-epochs = 3
+epochs = 200
 
 
 
@@ -128,13 +128,11 @@ def paper_plot_and_save_curves(da_history, current_epoch):
                 unit = '%'
 
             fig, ax = plt.subplots(figsize=(3.5, 2.5))
-            ax.plot(range(1, len(acc_list) + 1), acc_list, label=f'{da_type} {val}{unit}', color='#d62728')
+            ax.plot(range(1, len(acc_list) + 1), acc_list, label=f'Model', color='#d62728')
             ax.set_xlabel('Epoch')
             ax.set_ylabel('Accuracy (%)')
             ax.set_title(f'Accuracy Validation: {da_type} {val}{unit}')
-            ax.set_xlim(1, epochs)
             ax.set_ylim(0, 100)
-            ax.grid(True)
 
             if len(acc_list) > 0:
                 ax.legend(loc='lower right')
@@ -177,14 +175,11 @@ def meeting_plot_and_save_curves(da_history, current_epoch):
             for val, acc_list in values_dict.items():
                 if len(acc_list) > 0:
                     line_color = cmap(norm(val))
-                    ax.plot(range(1, len(acc_list) + 1), acc_list, label='Model', color=line_color, linestyle='-')
-            ax.legend(loc='lower right')
+                    ax.plot(range(1, len(acc_list) + 1), acc_list, color=line_color, linestyle='-')
             ax.set_xlabel('Epoch')
             ax.set_ylabel('Accuracy (%)')
             ax.set_title(f'Accuracy Validation')
-            ax.set_xlim(1, epochs)
             ax.set_ylim(0, 100)
-            ax.grid(True)
 
             sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
             sm.set_array([])
@@ -194,7 +189,7 @@ def meeting_plot_and_save_curves(da_history, current_epoch):
             cbar.set_ticklabels(np.arange(0, 210, 50))
 
             filename = f"EfficientNet_B0_Baseline_Accuracy.png"
-            sub_dir = FIG_DIR / "EfficientNet_Advanced" / "Baseline" / da_type / filename
+            sub_dir = FIG_DIR / "EfficientNet_Advanced" / "Baseline" / filename
             sub_dir.parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(sub_dir, bbox_inches='tight')
             plt.close(fig)
@@ -371,15 +366,44 @@ def Efficientnet_training():
     best_loss = float('inf')
     epoch_losses = []
 
-    # 權重續訓機制
+    # 權重續訓機制與歷史數據恢復
     if os.path.exists(MODEL_PATH):
         try:
             print(f"Loading weights from {MODEL_PATH}")
             checkpoint = torch.load(MODEL_PATH, map_location=device)
             model.load_state_dict(checkpoint['model_state_dict'])
+
+            # 嘗試載入優化器與排程器
+            if 'optimizer_state_dict' in checkpoint:
+                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            if 'scheduler_state_dict' in checkpoint:
+                scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+
             best_loss = checkpoint['best_loss']
             start_epoch = checkpoint['epoch']
             print("Weight loaded successfully.")
+
+            excel_path = Path(EXCEL_DIR) / "Step2.5" / "EfficientNet-B0" / 'DA_Accuracy_History.xlsx'
+            if os.path.exists(excel_path):
+                try:
+                    print("Loading historical data from Excel for continuous plotting...")
+                    df_history = pd.read_excel(excel_path, header=[0, 1], index_col=0)
+                    for da_type in da_conditions.keys():
+                        for val in da_conditions[da_type]:
+                            col_tuple_int = (da_type, val)
+                            col_tuple_str = (da_type, str(val))
+
+                            if col_tuple_int in df_history.columns:
+                                da_history[da_type][val] = df_history[col_tuple_int].dropna().tolist()[:start_epoch]
+                            elif col_tuple_str in df_history.columns:
+                                da_history[da_type][val] = df_history[col_tuple_str].dropna().tolist()[:start_epoch]
+
+                    baseline_len = len(da_history['Origin']['Baseline'])
+                    print(f"Plot history recovered successfully! Current recorded epochs: {baseline_len}")
+                except Exception as e:
+                    print(f"Failed to recover plot history: {e}")
+            # ==================================
+
         except Exception as e:
             print(f"Loading failed: {e}, training from scratch.")
     else:
@@ -400,8 +424,6 @@ def Efficientnet_training():
                 loss = criterion(outputs, id_label)
                 loss.backward()
 
-                # 梯度裁剪防止卷積神經網路梯度爆炸
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=2.0)
                 optimizer.step()
 
                 running_loss += loss.item()
@@ -429,12 +451,13 @@ def Efficientnet_training():
         save_to_paper_excel(da_history)
         save_to_meeting_excel(da_history)
 
-
         # 儲存最優模型
         if avg_loss < best_loss:
             best_loss = avg_loss
             checkpoint = {
                 'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),  # 新增：儲存優化器動量
+                'scheduler_state_dict': scheduler.state_dict(),  # 新增：儲存排程器紀錄
                 'best_loss': best_loss,
                 'epoch': epoch + 1
             }
