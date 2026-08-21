@@ -89,8 +89,7 @@ class _EfficientNet_B0_Hopfield(nn.Module):
         return out
 
 def build_model(num_classes=1000):
-    model = _EfficientNet_B0_Hopfield(num_classes=num_classes, num_memories=512)
-    return model
+    return _EfficientNet_B0_Hopfield(num_classes=num_classes, num_memories=512)
 
 if __name__ == '__main__':
     model = build_model()

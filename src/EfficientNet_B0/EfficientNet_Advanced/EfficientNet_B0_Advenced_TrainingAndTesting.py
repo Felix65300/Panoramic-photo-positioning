@@ -135,11 +135,20 @@ def model_training_and_test ():
                 running_loss += loss.item()
                 loop.set_postfix(loss=loss.item())
                 current_lr = optimizer.param_groups[0]['lr']
+                # 抓取模型中所有名為 'alpha' 的參數值
+                alphas = [param.item() for name, param in model.named_parameters() if 'alpha' in name]
+
+                if len(alphas) == 0:
+                    current_alpha = 0.0
+                elif len(alphas) == 1:
+                    current_alpha = alphas[0]
+                else:
+                    current_alpha = sum(alphas) / len(alphas)
 
         avg_loss = running_loss / len(TRAIN_DATALOADER)
         scheduler.step(avg_loss)
 
-        print(f"Loss: {avg_loss:.4f} | LR: {current_lr:.8f}")
+        print(f"Loss: {avg_loss:.4f} | LR: {current_lr:.8f} | Alphas: {alphas:.4f}")
 
 
         if avg_loss < best_loss:
@@ -153,13 +162,15 @@ def model_training_and_test ():
             torch.save(checkpoint, MODEL_PATH)
         model_test(model)
 
+        generate_meeting_figure()
+        generate_paper_figure()
+
 def generate_meeting_figure():
     global DA_ACCURACY,FIG_DIR
-    epochs = np.arange(1, Num_Epoch+1)
     # 全局設置
     plt.rcParams.update({
         'font.family': 'sans-serif',  # 使用非襯線字體，閱讀性較佳
-        'font.serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
+        'font.sans-serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
         'font.size': 18,                 # 基準字體大小
         'axes.labelsize': 20,            # 軸標籤字體加大
         'axes.titlesize': 24,            # 標題字體最大
@@ -183,7 +194,7 @@ def generate_meeting_figure():
     for category, values in DA_ACCURACY.items():
         for val,accuracy in values.items():
             line_color = cmap(norm(val))
-            ax.plot(epochs, accuracy, color=line_color, linestyle='-')
+            ax.plot(range(1,len(accuracy) + 1), accuracy, color=line_color, linestyle='-')
     ax.set_xlabel("Epochs")
     ax.set_ylabel("Accuracy (%)")
     ax.set_title(f'Accuracy Validation')
@@ -218,11 +229,10 @@ def generate_meeting_figure():
     save_path = Path(FIG_DIR) / "EfficientNet_Advanced" / f"{fig_name}"
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, bbox_inches='tight')
-    plt.close()
+    plt.close(fig)
 
 def generate_paper_figure():
     global DA_ACCURACY,FIG_DIR
-    epochs = np.arange(1, Num_Epoch+1)
     # 全局設置
     plt.rcParams.update({
         'font.family': 'serif',  # 使用襯線字體
@@ -246,12 +256,14 @@ def generate_paper_figure():
     for category, values in DA_ACCURACY.items():
         for val,accuracy in values.items():
             fig, ax = plt.subplots(figsize=(3.5, 2.5))
-            ax.plot(epochs, accuracy, label="Model", color=color, linestyle='-')
+            ax.plot(range(1, len(accuracy) + 1), accuracy, label="Model", color=color, linestyle='-')
             ax.set_xlabel("Epochs")
             ax.set_ylabel("Accuracy (%)")
             ax.set_title(f'Accuracy Validation: {category} {val}%')
-            ax.legend(loc='lower right')
             ax.set_ylim(0, 100)
+
+            if len(accuracy) > 0:
+                ax.legend(loc='lower right')
 
             # ===========================
             # 6. 最後調整與存檔
@@ -266,7 +278,7 @@ def generate_paper_figure():
             save_path = Path(FIG_DIR) / "EfficientNet_Advanced"/ "GeM" / f"{category}" / f"{fig_name}"
             save_path.parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(save_path, bbox_inches='tight')
-            plt.close()
+            plt.close(fig)
 
 def gernerate_xlsx():
     global DA_ACCURACY

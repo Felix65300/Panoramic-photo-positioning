@@ -150,7 +150,7 @@ def paper_plot_and_save_curves(da_history, current_epoch):
 def meeting_plot_and_save_curves(da_history, current_epoch):
     plt.rcParams.update({
         'font.family': 'sans-serif',
-        'font.serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
+        'font.sans-serif': ['Arial', 'Helvetica', 'DejaVu Sans'],
         'font.size': 18,
         'axes.labelsize': 20,
         'axes.titlesize': 24,
