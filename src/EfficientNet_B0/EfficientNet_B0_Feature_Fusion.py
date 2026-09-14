@@ -26,10 +26,13 @@ class _EfficientNet_MultiScale(nn.Module):
         # 提取所以 6, 7, 8，輸出通道為 1280
         self.stage3 = backbone.features[6:]
 
+        # 定義pool
+        self.pool = nn.AdaptiveAvgPool2d((1, 1))
+
         # =====================================
         # 重建分類頭部
         # =====================================
-        # 拚街後的特徵維度 = 40 + 112 + 1280 = 1430
+        # 拚街後的特徵維度 = 40 + 112 + 1280 = 1432
         in_features = 40 + 112 + 1280
 
         self.classifier = nn.Sequential(
@@ -48,9 +51,10 @@ class _EfficientNet_MultiScale(nn.Module):
         f3 = self.stage3(f2)
 
         # 4. 對三個層級的特徵分別進行池化，並展平 (Flatten) 為 1D 向量
-        p1 = torch.faltten(self.pool(f1), 1) # 形狀：[B, 40]
-        p2 = torch.faltten(self.pool(f2), 1) # 形狀：[B, 112]
-        p3 = torch.faltten(self.pool(f3), 1) # 形狀：[B, 1280]
+        # 拼錯字了
+        p1 = torch.flatten(self.pool(f1), 1) # 形狀：[B, 40]
+        p2 = torch.flatten(self.pool(f2), 1) # 形狀：[B, 112]
+        p3 = torch.flatten(self.pool(f3), 1) # 形狀：[B, 1280]
 
         # 5. 在通道維度 (dim=1) 上將三者拼接
         f_cat = torch.cat([p1, p2, p3], dim=1) # 總長度: 1432

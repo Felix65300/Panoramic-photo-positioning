@@ -34,7 +34,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from src.data_Step2_5_Test import get_test_dataset
 from src.data_Step2_5_Train import get_train_dataset
-from src.EfficientNet_B0.EfficientNet_B0_GeM import build_model
+from src.EfficientNet_B0.EfficientNet_B0_Hopfield_Network import build_model
 
 # ---------------------------------
 # 1. 設定參數與裝置
@@ -49,7 +49,7 @@ TRAIN_DIR = Project_Root + '/Datasets/Dataset_Step1'
 TEST_ROOT = Project_Root + '/Datasets/Dataset_Step2'
 FIG_DIR = Project_Root + '/Figures/'
 XLSX_DIR = Project_Root + '/Figures/'
-MODEL_PATH = 'EfficientNet_B0_GeM_model.pth'
+MODEL_PATH = 'EfficientNet_B0_Hopfield_Network_model.pth'
 DA_ACCURACY = {}
 
 TEST_DATALOADER_DICT = {}
@@ -148,7 +148,8 @@ def model_training_and_test ():
         avg_loss = running_loss / len(TRAIN_DATALOADER)
         scheduler.step(avg_loss)
 
-        print(f"Loss: {avg_loss:.4f} | LR: {current_lr:.8f} | Alphas: {alphas:.4f}")
+        formatted_alphas = [f"{a:.4f}" for a in alphas]
+        print(f"Loss: {avg_loss:.4f} | LR: {current_lr:.8f} | Alphas: {formatted_alphas}")
 
 
         if avg_loss < best_loss:
@@ -225,7 +226,7 @@ def generate_meeting_figure():
     # dpi=300 是印刷品質的標準
     # bbox_inches='tight' 確保儲存時去除多餘白邊
     plt.tight_layout()
-    fig_name = f"EfficientNet_B0_GeM_Accuracy.png"
+    fig_name = f"EfficientNet_B0_Hopfield_Network_Accuracy.png"
     save_path = Path(FIG_DIR) / "EfficientNet_Advanced" / f"{fig_name}"
     save_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(save_path, bbox_inches='tight')
@@ -275,7 +276,7 @@ def generate_paper_figure():
             plt.tight_layout()
 
             fig_name = f"{category}_{val}%_Accuracy.png"
-            save_path = Path(FIG_DIR) / "EfficientNet_Advanced"/ "GeM" / f"{category}" / f"{fig_name}"
+            save_path = Path(FIG_DIR) / "EfficientNet_Advanced"/ "Hopfield_Network" / f"{category}" / f"{fig_name}"
             save_path.parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(save_path, bbox_inches='tight')
             plt.close(fig)
@@ -295,7 +296,7 @@ def gernerate_xlsx():
     df.index = range(1, len(df) + 1)
     df.index.name = 'Epoch'
     df.columns.names = ['DA Topic', 'Intensity']
-    file_path = Path(XLSX_DIR) / "EfficientNet_Advanced"/ "GeM" / "DA_Accuracy_Final.xlsx"
+    file_path = Path(XLSX_DIR) / "EfficientNet_Advanced"/ "Hopfield_Network" / "DA_Accuracy_Final.xlsx"
     df.to_excel(file_path, engine='openpyxl')
 
     # ==========================================
