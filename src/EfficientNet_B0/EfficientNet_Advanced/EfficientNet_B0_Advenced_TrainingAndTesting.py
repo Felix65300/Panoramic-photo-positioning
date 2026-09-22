@@ -51,7 +51,7 @@ FIG_DIR = Project_Root + '/Figures/'
 XLSX_DIR = Project_Root + '/Figures/'
 MODEL_PATH = 'EfficientNet_B0_FDA_model.pth'
 DA_ACCURACY = {}
-VARIABLE = 'FDA'
+VARIABLE = ' '
 
 TEST_DATALOADER_DICT = {}
 TRAIN_DATALOADER = None
