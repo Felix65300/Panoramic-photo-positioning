@@ -1,7 +1,7 @@
 import torch.nn as nn
 from torchvision.models import resnet18
 
-def get_pano_model(num_classes=1000, pretrained=False):
+def get_pano_model(num_classes=1000, pretrained=True):
     """
     統一管理模型的定義。
     

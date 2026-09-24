@@ -39,7 +39,7 @@ from src.Resnet18.resnet18_revised_version import get_pano_model
 # ---------------------------------
 # 1. 設定參數與裝置
 # ---------------------------------
-BATCH_SIZE = 32 # 根據顯卡記憶體調整 (16 或 32)
+BATCH_SIZE = 16 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
 Num_Epoch = 200
 IMG_WIDTH = 512      # ← 改成 224
@@ -88,6 +88,7 @@ def define_data_loaders():
     DA_ACCURACY['Origin'] = {}
     DA_ACCURACY['Origin']['Baseline'] = list()
 
+
 def model_test(model):
     global TEST_DATALOADER_DICT, DA_ACCURACY
     model.eval()
@@ -104,7 +105,9 @@ def model_test(model):
 
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
-             DA_ACCURACY[category][val].append(100 * correct / total)
+
+            # 👇 注意這裡：退回跟 with torch.no_grad(): 相同的縮排層級
+            DA_ACCURACY[category][val].append(100 * correct / total)
 
 def model_training_and_test ():
     global TRAIN_DATALOADER, DEVICE, MODEL_PATH, Num_Epoch
