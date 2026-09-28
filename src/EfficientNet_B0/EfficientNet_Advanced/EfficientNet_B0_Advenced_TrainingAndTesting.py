@@ -34,12 +34,12 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from src.data_Step2_5_Test import get_test_dataset
 from src.data_Step2_5_Train import get_train_dataset
-from src.EfficientNet_B0.EfficientNet_B0_FDA import build_model
+from src.EfficientNet_B0.EfficientNet_B0_ECA import build_model
 
 # ---------------------------------
 # 1. 設定參數與裝置
 # ---------------------------------
-BATCH_SIZE = 32 # 根據顯卡記憶體調整 (16 或 32)
+BATCH_SIZE = 16 # 根據顯卡記憶體調整 (16 或 32)
 Learning_Rate = 1e-4 # Adam 的標準學習率
 Num_Epoch = 200
 IMG_WIDTH = 512
@@ -49,9 +49,9 @@ TRAIN_DIR = Project_Root + '/Datasets/Dataset_Step1'
 TEST_ROOT = Project_Root + '/Datasets/Dataset_Step2'
 FIG_DIR = Project_Root + '/Figures/'
 XLSX_DIR = Project_Root + '/Figures/'
-MODEL_PATH = 'EfficientNet_B0_FDA_model.pth'
+MODEL_PATH = 'EfficientNet_B0_ECA_model.pth'
 DA_ACCURACY = {}
-VARIABLE = 'FDA'
+VARIABLE = 'ECA'
 
 TEST_DATALOADER_DICT = {}
 TRAIN_DATALOADER = None
