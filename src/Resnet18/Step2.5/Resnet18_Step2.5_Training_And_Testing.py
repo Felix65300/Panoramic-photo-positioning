@@ -163,10 +163,10 @@ def model_training_and_test ():
 
             torch.save(checkpoint, MODEL_PATH)
         model_test(model)
+        generate_figure()
 
 def generate_figure():
     global DA_ACCURACY,FIG_DIR
-    epochs = np.arange(1, 201)
     plt.rcParams.update({
         'font.family': 'serif',
         'font.serif': ['Times New Roman'],
@@ -187,11 +187,16 @@ def generate_figure():
     for category, values in DA_ACCURACY.items():
         for val,accuracy in values.items():
             fig, ax = plt.subplots(figsize=(3.5, 2.5))
-            ax.plot(epochs, accuracy, label="Model", color=color, linestyle='-')
+            ax.plot(range(1,len(accuracy) + 1), accuracy, label="Model", color=color, linestyle='-')
             ax.set_xlabel("Epochs")
             ax.set_ylabel("Accuracy (%)")
             ax.legend(loc='lower right')
             ax.set_ylim(0, 100)
+
+            if len(accuracy) > 0:
+                ax.legend(loc='lower right')
+
+
             plt.tight_layout()
             fig_name = f"{category}"
             if category == 'Horizontal_Roll':
@@ -201,8 +206,8 @@ def generate_figure():
             fig_name += '_Accuracy.png'
             save_path = Path(FIG_DIR) / f"{category}" / f"{fig_name}"
             save_path.parent.mkdir(parents=True, exist_ok=True)
-            plt.savefig(save_path, bbox_inches='tight')
-            plt.close()
+            fig.savefig(save_path, bbox_inches='tight')
+            plt.close(fig)
 
 def gernerate_xlsx():
     global DA_ACCURACY
@@ -261,8 +266,8 @@ def gernerate_xlsx():
 def main():
     define_data_loaders()
     model_training_and_test()
-    generate_figure()
     gernerate_xlsx()
 
 if __name__ == '__main__':
+    print("執行 Resnet18 🚀")
     main()
